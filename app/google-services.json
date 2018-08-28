@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "318430557359",
+    "firebase_url": "https://xatentresol-146fe.firebaseio.com",
+    "project_id": "xatentresol-146fe",
+    "storage_bucket": "xatentresol-146fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318430557359:android:8d3fddfa28321816",
+        "android_client_info": {
+          "package_name": "appkite.jordiguzman.com.xatentresol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318430557359-45lamqvonm7tkthujn0tdic99s44ssj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoYw42r1CovF1PqKCZG1XLj3EgU5pNGx8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
