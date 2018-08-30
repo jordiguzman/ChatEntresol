@@ -32,7 +32,7 @@ class SignInActivity : AppCompatActivity() {
         account_sign_in.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                     .setAvailableProviders(signInProviders)
-                    .setLogo(R.drawable.ic_fire_emoji)
+                    .setLogo(R.drawable.ic_logo)
                     .build()
             startActivityForResult(intent, RC_SIGN_IN)
         }
