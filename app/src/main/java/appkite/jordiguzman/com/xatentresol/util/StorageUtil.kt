@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VALUE")
+
 package appkite.jordiguzman.com.xatentresol.util
 
 import com.google.firebase.auth.FirebaseAuth
@@ -12,6 +14,7 @@ object StorageUtil {
         get() = storageInstance.reference
                 .child(FirebaseAuth.getInstance().currentUser?.uid
                         ?: throw NullPointerException("UID is null."))
+
 
     fun uploadProfilePhoto(imageBytes: ByteArray,
                            onSuccess: (imagePath: String) -> Unit) {
@@ -32,4 +35,17 @@ object StorageUtil {
     }
 
     fun pathToReference(path: String) = storageInstance.getReference(path)
+
+     fun imagePathUrl(): StorageReference{
+
+         return storageInstance.reference.child("message/").child(currentUserRef.path + ".jpg")
+     }
+
+
+
+
+
+
 }
+
+

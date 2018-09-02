@@ -7,8 +7,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
+import android.widget.ImageView
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
-import appkite.jordiguzman.com.xatentresol.model.MessageType
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
@@ -20,6 +21,7 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
+import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -43,6 +45,8 @@ class ChatActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+        //supportActionBar?.setIcon()
+
 
         FirestoreUtil.getCurrentUser {
             currentUser = it
@@ -54,16 +58,19 @@ class ChatActivity : AppCompatActivity() {
 
             messagesListenerRegistration =
                     FirestoreUtil.addChatMessagesListener(channelId, this, this::updateRecyclerView)
+
             imageView_send.setOnClickListener {
                 if (editText_message.text.isEmpty())return@setOnClickListener
                 val messageToSend =
                         TextMessage(editText_message.text.toString(), Calendar.getInstance().time,
-                                FirebaseAuth.getInstance().currentUser!!.uid, MessageType.TEXT)
+                                FirebaseAuth.getInstance().currentUser!!.uid,
+                                otherUserId, currentUser.name)
                 editText_message.setText("")
                 FirestoreUtil.sendMessage(messageToSend, channelId)
 
             }
             fab_send_image.setOnClickListener {
+                toast("Recuerda que las fotos de cámara se tienen que hacer en panorámico")
                 val intent = Intent().apply {
                     type = "image/*"
                     action = Intent.ACTION_GET_CONTENT
@@ -74,10 +81,17 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun showSend() {
+        val iv = findViewById<ImageView>(R.id.imageView_send)
+        iv.visibility = View.VISIBLE
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SELECTED_IMAGE && resultCode == Activity.RESULT_OK &&
                 data != null && data.data != null){
             val selectedImagePath = data.data
+
             val selectedImageBmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImagePath)
 
             val outputStream = ByteArrayOutputStream()
@@ -85,14 +99,18 @@ class ChatActivity : AppCompatActivity() {
             val selectedImageBytes = outputStream.toByteArray()
             StorageUtil.uploadMessageImage(selectedImageBytes){ imagePath ->
                 val messageToSend =
-                        ImageMessage(imagePath, Calendar.getInstance().time,
-                                FirebaseAuth.getInstance().currentUser!!.uid)
+                        ImageMessage(imagePath,  Calendar.getInstance().time,
+                                FirebaseAuth.getInstance().currentUser!!.uid,
+                                otherUserId, currentUser.name)
                 FirestoreUtil.sendMessage(messageToSend, currentChannelId)
 
             }
 
         }
     }
+
+
+
 
     private fun updateRecyclerView(messages: List<Item>) {
         fun init() {

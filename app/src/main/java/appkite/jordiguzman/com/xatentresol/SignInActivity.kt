@@ -35,6 +35,7 @@ class SignInActivity : AppCompatActivity() {
                     .setLogo(R.drawable.ic_logo)
                     .build()
             startActivityForResult(intent, RC_SIGN_IN)
+
         }
     }
 
@@ -48,7 +49,6 @@ class SignInActivity : AppCompatActivity() {
                 val progressDialog = indeterminateProgressDialog("Setting up your account")
                 FirestoreUtil.initCurrentUserIfFirstTime {
                     startActivity(intentFor<MainActivity>().newTask().clearTask())
-
 
                     progressDialog.dismiss()
                 }

@@ -72,6 +72,8 @@ class PeopleFragment : Fragment() {
             startActivity<ChatActivity>(
                     AppConstants.USER_NAME to item.person.name,
                     AppConstants.USER_ID to item.userId
+
+
             )
         }
     }

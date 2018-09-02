@@ -15,6 +15,8 @@ class ImageMessageItem (val message: ImageMessage,
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         super.bind(viewHolder, position)
+
+
         GlideApp.with(context)
                 .load(StorageUtil.pathToReference(message.imagePath))
                 .placeholder(R.drawable.ic_image_black_24dp)
@@ -40,3 +42,10 @@ class ImageMessageItem (val message: ImageMessage,
     }
 
 }
+
+
+
+
+
+
+
