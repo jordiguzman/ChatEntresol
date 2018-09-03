@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol
+package appkite.jordiguzman.com.xatentresol.util
 
 object AppConstants {
     const val USER_NAME = "USER_NAME"

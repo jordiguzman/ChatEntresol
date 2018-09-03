@@ -1,28 +1,42 @@
 package appkite.jordiguzman.com.xatentresol.recyclerview.item
 
 import android.content.Context
+import android.content.Intent
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ImageViewActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.item_image_message.*
+import kotlinx.android.synthetic.main.item_image_message.view.*
 
 
 class ImageMessageItem (val message: ImageMessage,
                         val context: Context)
     :MessageItem(message){
+    var pathImage = ""
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         super.bind(viewHolder, position)
 
 
+        pathImage = StorageUtil.pathToReference(message.imagePath).toString()
+
+        //TODO Comprobar path con toString() y sin. Tienen que ser diferentes.
         GlideApp.with(context)
-                .load(StorageUtil.pathToReference(message.imagePath))
+                .load(pathImage)
                 .placeholder(R.drawable.ic_image_black_24dp)
                 .into(viewHolder.imageView_message_image)
+        viewHolder.itemView.imageView_message_image.setOnClickListener {
+
+            toImageActivity()
+
+
+        }
     }
     override fun getLayout() = R.layout.item_image_message
+
 
     override fun isSameAs(other: com.xwray.groupie.Item<*>?): Boolean {
         if (other !is ImageMessageItem)
@@ -39,6 +53,13 @@ class ImageMessageItem (val message: ImageMessage,
         var result = message.hashCode()
         result = 31 * result + context.hashCode()
         return result
+    }
+
+    private fun toImageActivity(){
+       pathImage = StorageUtil.pathToReference(message.imagePath).toString()
+        val intent = Intent(context, ImageViewActivity::class.java)
+        intent.putExtra("path", pathImage)
+        context.startActivity(intent)
     }
 
 }

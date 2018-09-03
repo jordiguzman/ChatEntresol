@@ -7,8 +7,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import appkite.jordiguzman.com.xatentresol.AppConstants
-import appkite.jordiguzman.com.xatentresol.ChatActivity
+import appkite.jordiguzman.com.xatentresol.util.AppConstants
+import appkite.jordiguzman.com.xatentresol.activities.ChatActivity
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
 import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil

@@ -1,9 +1,10 @@
-package appkite.jordiguzman.com.xatentresol
+package appkite.jordiguzman.com.xatentresol.activities
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes

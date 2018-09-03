@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol
+package appkite.jordiguzman.com.xatentresol.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

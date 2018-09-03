@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol
+package appkite.jordiguzman.com.xatentresol.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.ImageView
+import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
+import appkite.jordiguzman.com.xatentresol.util.AppConstants
 import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -76,7 +78,7 @@ class ChatActivity : AppCompatActivity() {
                     action = Intent.ACTION_GET_CONTENT
                     putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
                 }
-                startActivityForResult(Intent.createChooser(intent, "Select image"), RC_SELECTED_IMAGE )
+                startActivityForResult(Intent.createChooser(intent, "Select image"), RC_SELECTED_IMAGE)
             }
         }
     }

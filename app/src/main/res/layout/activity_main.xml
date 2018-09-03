@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="appkite.jordiguzman.com.xatentresol.MainActivity"
+    android:background="@color/background"
+    tools:context="appkite.jordiguzman.com.xatentresol.activities.MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
     <FrameLayout
@@ -24,6 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:itemTextColor="@drawable/nav_item_color_state"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

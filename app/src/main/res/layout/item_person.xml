@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView_item_person"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="80dp"
     android:layout_margin="4dp"
     style="@style/CardView"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@android:color/white"
+    app:cardBackgroundColor="@color/primary_light"
     android:clickable="true"
     android:focusable="true"
     app:cardCornerRadius="4dp"
@@ -18,10 +18,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageView_profile_picture"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            app:civ_border_color="@android:color/black"
+            app:civ_border_width="2dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             tools:src="@drawable/ic_account_circle_black_24dp"/>

@@ -1,9 +1,10 @@
-package appkite.jordiguzman.com.xatentresol
+package appkite.jordiguzman.com.xatentresol.activities
 
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.fragment.MyAcountFragment
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,6 +16,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         replaceFragment(PeopleFragment())
 
+        navigation.itemBackgroundResource = R.color.colorPrimaryDark
+
         navigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_people -> {
@@ -25,6 +28,13 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(MyAcountFragment())
                     true
                 }
+                R.id.navigation_settings ->{
+                    true
+                }
+                R.id.navigation_help ->{
+                    true
+                }
+
                 else -> false
             }
         }

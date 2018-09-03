@@ -4,15 +4,17 @@ package appkite.jordiguzman.com.xatentresol.fragment
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.annotation.RequiresApi
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
@@ -34,7 +36,9 @@ class MyAcountFragment : Fragment() {
     private val RC_SELECT_IMAGE = 2
     private lateinit var selectedImageBytes: ByteArray
     private var pictureJustChanged = false
+    private var isEditable = false
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_my_acount, container, false)
@@ -50,6 +54,16 @@ class MyAcountFragment : Fragment() {
             }
 
             btn_save.setOnClickListener {
+                isEditable = true
+                if (isEditable){
+                    editText_name.isEnabled = true
+                    editText_bio.isEnabled = true
+                    imageView_profile_picture.isEnabled = true
+                    btn_save.text = getString(R.string.save)
+                    onStart()
+                    return@setOnClickListener
+                }
+
                 if (::selectedImageBytes.isInitialized)
                     StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
                         FirestoreUtil.updateCurrentUser(editText_name.text.toString(),
@@ -92,10 +106,17 @@ class MyAcountFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
         FirestoreUtil.getCurrentUser { user ->
             if (this@MyAcountFragment.isVisible) {
+                if (!isEditable){
+                    editText_name.isEnabled = false
+                    editText_bio.isEnabled = false
+                    imageView_profile_picture.isEnabled = false
+                    btn_save.text = getString(R.string.edit_profile)
+                }
                 editText_name.setText(user.name)
                 editText_bio.setText(user.bio)
                 if (!pictureJustChanged && user.profilePicturePath != null)
@@ -103,6 +124,7 @@ class MyAcountFragment : Fragment() {
                             .load(StorageUtil.pathToReference(user.profilePicturePath))
                             .placeholder(R.drawable.ic_account_circle_black_24dp)
                             .into(imageView_profile_picture)
+
             }
         }
     }
