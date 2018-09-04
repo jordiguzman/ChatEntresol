@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import android.widget.ImageView
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
@@ -47,7 +45,8 @@ class ChatActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
-        //supportActionBar?.setIcon()
+
+        supportActionBar?.setIcon(R.drawable.indice)
 
 
         FirestoreUtil.getCurrentUser {
@@ -83,11 +82,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSend() {
-        val iv = findViewById<ImageView>(R.id.imageView_send)
-        iv.visibility = View.VISIBLE
 
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SELECTED_IMAGE && resultCode == Activity.RESULT_OK &&

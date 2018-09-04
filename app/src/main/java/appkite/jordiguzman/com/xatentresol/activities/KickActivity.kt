@@ -15,7 +15,7 @@ class KickActivity : AppCompatActivity() {
 
 
         hideNavigation()
-       val countDownTimer = object: CountDownTimer(1500, 200){
+       val countDownTimer = object: CountDownTimer(500, 200){
            override fun onFinish() {
                 toSplash()
                finish()

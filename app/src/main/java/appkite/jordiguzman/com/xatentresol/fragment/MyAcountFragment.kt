@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
@@ -22,15 +21,12 @@ import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_my_acount.*
 import kotlinx.android.synthetic.main.fragment_my_acount.view.*
 import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.support.v4.intentFor
-import org.jetbrains.anko.support.v4.toast
 import java.io.ByteArrayOutputStream
 
 
-/**
- * A simple [Fragment] subclass.
- */
 class MyAcountFragment : Fragment() {
 
     private val RC_SELECT_IMAGE = 2
@@ -43,6 +39,7 @@ class MyAcountFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_my_acount, container, false)
 
+
         view.apply {
             imageView_profile_picture.setOnClickListener {
                 val intent = Intent().apply {
@@ -53,17 +50,13 @@ class MyAcountFragment : Fragment() {
                 startActivityForResult(Intent.createChooser(intent, "Select Image"), RC_SELECT_IMAGE)
             }
 
+
             btn_save.setOnClickListener {
-                isEditable = true
-                if (isEditable){
-                    editText_name.isEnabled = true
-                    editText_bio.isEnabled = true
-                    imageView_profile_picture.isEnabled = true
-                    btn_save.text = getString(R.string.save)
-                    onStart()
+                if (isEditable) {
+                    isEditable = false
+                    activeUserProfile(view)
                     return@setOnClickListener
                 }
-
                 if (::selectedImageBytes.isInitialized)
                     StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
                         FirestoreUtil.updateCurrentUser(editText_name.text.toString(),
@@ -72,7 +65,8 @@ class MyAcountFragment : Fragment() {
                 else
                     FirestoreUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), null)
-                toast("Saving")
+                longSnackbar(constraint_layout_fragment_my_acount, "Saved")
+                deactiveUserProfile(view)
             }
 
             btn_sign_out.setOnClickListener {
@@ -82,9 +76,25 @@ class MyAcountFragment : Fragment() {
                             startActivity(intentFor<SignInActivity>().newTask().clearTask())
                         }
             }
+            if (btn_save.text == "Edit profile") {
+                isEditable = true
+                deactiveUserProfile(view)
+            }
         }
 
         return view
+    }
+
+    private fun deactiveUserProfile(view: View) {
+        view.editText_name.isEnabled = false
+        view.editText_bio.isEnabled = false
+        view.imageView_profile_picture.isEnabled = false
+    }
+
+    private fun activeUserProfile(view: View) {
+        view.editText_name.isEnabled = true
+        view.editText_bio.isEnabled = true
+        view.imageView_profile_picture.isEnabled = true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,12 +121,6 @@ class MyAcountFragment : Fragment() {
         super.onStart()
         FirestoreUtil.getCurrentUser { user ->
             if (this@MyAcountFragment.isVisible) {
-                if (!isEditable){
-                    editText_name.isEnabled = false
-                    editText_bio.isEnabled = false
-                    imageView_profile_picture.isEnabled = false
-                    btn_save.text = getString(R.string.edit_profile)
-                }
                 editText_name.setText(user.name)
                 editText_bio.setText(user.bio)
                 if (!pictureJustChanged && user.profilePicturePath != null)
