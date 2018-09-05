@@ -14,13 +14,15 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 
-object FirestoreUtil {
+object XatUtil {
 
     private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     private val currentUserDocRef: DocumentReference
         get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
                 ?: throw NullPointerException("UID is null.")}")
+
+
 
 
     private val chatChannelsCollectionRef = firestoreInstance.collection("chatChannels")
@@ -39,6 +41,19 @@ object FirestoreUtil {
         }
     }
 
+    fun deleteCurrentUser(){
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+         db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                 .delete()
+
+        val auth = FirebaseAuth.getInstance().currentUser
+        auth?.delete()
+
+
+
+
+    }
+
     fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null) {
         val userFieldMap = mutableMapOf<String, Any>()
         if (name.isNotBlank()) userFieldMap["name"] = name
@@ -53,6 +68,7 @@ object FirestoreUtil {
                 .addOnSuccessListener {
                     onComplete(it.toObject(User::class.java)!!)
                 }
+
     }
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
         return firestoreInstance.collection("users")

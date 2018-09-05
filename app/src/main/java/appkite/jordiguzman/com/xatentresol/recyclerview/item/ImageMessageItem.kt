@@ -7,6 +7,7 @@ import appkite.jordiguzman.com.xatentresol.activities.ImageViewActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
+import com.google.firebase.storage.StorageReference
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.item_image_message.*
 import kotlinx.android.synthetic.main.item_image_message.view.*
@@ -15,14 +16,19 @@ import kotlinx.android.synthetic.main.item_image_message.view.*
 class ImageMessageItem (val message: ImageMessage,
                         val context: Context)
     :MessageItem(message){
-    var pathImage = ""
+
+     companion object {
+         lateinit  var pathImage: StorageReference
+     }
+
+
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         super.bind(viewHolder, position)
 
 
-        pathImage = StorageUtil.pathToReference(message.imagePath).toString()
 
+        pathImage = StorageUtil.pathToReference(message.imagePath)
         //TODO Comprobar path con toString() y sin. Tienen que ser diferentes.
         GlideApp.with(context)
                 .load(pathImage)
@@ -56,9 +62,9 @@ class ImageMessageItem (val message: ImageMessage,
     }
 
     private fun toImageActivity(){
-       pathImage = StorageUtil.pathToReference(message.imagePath).toString()
+        pathImage = StorageUtil.pathToReference(message.imagePath)
         val intent = Intent(context, ImageViewActivity::class.java)
-        intent.putExtra("path", pathImage)
+
         context.startActivity(intent)
     }
 

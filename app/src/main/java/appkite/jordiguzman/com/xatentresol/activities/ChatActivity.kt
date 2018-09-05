@@ -12,7 +12,7 @@ import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.AppConstants
-import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -46,19 +46,17 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
 
-        supportActionBar?.setIcon(R.drawable.indice)
 
-
-        FirestoreUtil.getCurrentUser {
+        XatUtil.getCurrentUser {
             currentUser = it
         }
 
         otherUserId = intent.getStringExtra(AppConstants.USER_ID)
-        FirestoreUtil.getOrCreateChatChannel(otherUserId) { channelId ->
+        XatUtil.getOrCreateChatChannel(otherUserId) { channelId ->
             currentChannelId = channelId
 
             messagesListenerRegistration =
-                    FirestoreUtil.addChatMessagesListener(channelId, this, this::updateRecyclerView)
+                    XatUtil.addChatMessagesListener(channelId, this, this::updateRecyclerView)
 
             imageView_send.setOnClickListener {
                 if (editText_message.text.isEmpty())return@setOnClickListener
@@ -67,7 +65,7 @@ class ChatActivity : AppCompatActivity() {
                                 FirebaseAuth.getInstance().currentUser!!.uid,
                                 otherUserId, currentUser.name)
                 editText_message.setText("")
-                FirestoreUtil.sendMessage(messageToSend, channelId)
+                XatUtil.sendMessage(messageToSend, channelId)
 
             }
             fab_send_image.setOnClickListener {
@@ -99,7 +97,7 @@ class ChatActivity : AppCompatActivity() {
                         ImageMessage(imagePath,  Calendar.getInstance().time,
                                 FirebaseAuth.getInstance().currentUser!!.uid,
                                 otherUserId, currentUser.name)
-                FirestoreUtil.sendMessage(messageToSend, currentChannelId)
+                XatUtil.sendMessage(messageToSend, currentChannelId)
 
             }
 

@@ -20,16 +20,8 @@
         <activity
             android:name=".activities.SignInActivity"
             android:label="Start firing messages" />
-        <activity android:name=".activities.ChatActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-
-            <intent-filter>
-                <action android:name="ChatActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+        <activity android:name=".activities.ChatActivity"
+            android:parentActivityName=".activities.MainActivity">
         </activity>
         <activity android:name=".activities.KickActivity">
             <intent-filter>
@@ -38,7 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ImageViewActivity"/>
+        <activity android:name=".activities.ImageViewActivity"
+            android:theme="@style/SplashTeme"/>
     </application>
 
 </manifest>

@@ -10,6 +10,11 @@
 
     <style name="SplashTeme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splah_screen_background</item>
+
     </style>
 
+    <style name="ToolbarTheme" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+    </style>
 </resources>

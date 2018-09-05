@@ -15,8 +15,8 @@ import android.view.ViewGroup
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
-import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_my_acount.*
 import kotlinx.android.synthetic.main.fragment_my_acount.view.*
@@ -59,11 +59,11 @@ class MyAcountFragment : Fragment() {
                 }
                 if (::selectedImageBytes.isInitialized)
                     StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
-                        FirestoreUtil.updateCurrentUser(editText_name.text.toString(),
+                        XatUtil.updateCurrentUser(editText_name.text.toString(),
                                 editText_bio.text.toString(), imagePath)
                     }
                 else
-                    FirestoreUtil.updateCurrentUser(editText_name.text.toString(),
+                    XatUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), null)
                 longSnackbar(constraint_layout_fragment_my_acount, "Saved")
                 deactiveUserProfile(view)
@@ -119,7 +119,7 @@ class MyAcountFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
-        FirestoreUtil.getCurrentUser { user ->
+        XatUtil.getCurrentUser { user ->
             if (this@MyAcountFragment.isVisible) {
                 editText_name.setText(user.name)
                 editText_bio.setText(user.bio)

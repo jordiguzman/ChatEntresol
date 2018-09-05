@@ -11,7 +11,7 @@ import appkite.jordiguzman.com.xatentresol.util.AppConstants
 import appkite.jordiguzman.com.xatentresol.activities.ChatActivity
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
-import appkite.jordiguzman.com.xatentresol.util.FirestoreUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
@@ -34,14 +34,14 @@ class PeopleFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        userListenerRegistration = FirestoreUtil.addUsersListener(this.activity!!, this::updateRecyclerView)
+        userListenerRegistration = XatUtil.addUsersListener(this.activity!!, this::updateRecyclerView)
 
         return inflater.inflate(R.layout.fragment_people, container, false)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        FirestoreUtil.removeListener(userListenerRegistration)
+        XatUtil.removeListener(userListenerRegistration)
         shouldInitRecyclerView = true
     }
 

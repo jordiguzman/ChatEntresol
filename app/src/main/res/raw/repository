@@ -1,0 +1,10 @@
+//supportActionBar?.setDisplayShowHomeEnabled(true)
+        //supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+
+        /*val drawable: FutureTarget<Drawable> =GlideApp.
+                with(this)
+                .asDrawable()
+                .load(currentUser.profilePicturePath)
+                .submit(300,300)*/
+
+        //supportActionBar?.setIcon(drawable)
