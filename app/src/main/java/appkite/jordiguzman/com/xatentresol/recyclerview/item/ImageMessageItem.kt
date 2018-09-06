@@ -29,7 +29,7 @@ class ImageMessageItem (val message: ImageMessage,
 
 
         pathImage = StorageUtil.pathToReference(message.imagePath)
-        //TODO Comprobar path con toString() y sin. Tienen que ser diferentes.
+
         GlideApp.with(context)
                 .load(pathImage)
                 .placeholder(R.drawable.ic_image_black_24dp)

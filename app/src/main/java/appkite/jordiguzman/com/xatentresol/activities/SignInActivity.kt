@@ -67,4 +67,8 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+
+    }
 }

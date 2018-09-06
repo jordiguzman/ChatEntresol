@@ -25,6 +25,7 @@ object XatUtil {
 
 
 
+
     private val chatChannelsCollectionRef = firestoreInstance.collection("chatChannels")
 
 
@@ -48,10 +49,7 @@ object XatUtil {
 
         val auth = FirebaseAuth.getInstance().currentUser
         auth?.delete()
-
-
-
-
+        currentUserDocRef.delete()
     }
 
     fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null) {
@@ -64,10 +62,16 @@ object XatUtil {
     }
 
     fun getCurrentUser(onComplete: (User) -> Unit) {
-        currentUserDocRef.get()
-                .addOnSuccessListener {
-                    onComplete(it.toObject(User::class.java)!!)
-                }
+         try {
+             currentUserDocRef.get()
+                     .addOnSuccessListener {
+                         onComplete(it.toObject(User::class.java)!!)
+                     }
+         }catch (e: Exception){
+             Log.d("Error", e.message)
+
+         }
+
 
     }
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
