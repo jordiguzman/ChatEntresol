@@ -8,7 +8,7 @@ import com.google.firebase.storage.StorageReference
 import java.util.*
 
 object StorageUtil {
-    private val storageInstance: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
+    val storageInstance: FirebaseStorage by lazy { FirebaseStorage.getInstance() }
 
     private val currentUserRef: StorageReference
         get() = storageInstance.reference

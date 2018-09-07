@@ -20,9 +20,9 @@
         <activity
             android:name=".activities.SignInActivity"
             android:label="Start firing messages" />
-        <activity android:name=".activities.ChatActivity"
-            android:parentActivityName=".activities.MainActivity">
-        </activity>
+        <activity
+            android:name=".activities.ChatActivity"
+            android:parentActivityName=".activities.MainActivity"/>
         <activity android:name=".activities.KickActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,8 +30,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ImageViewActivity"
-            android:theme="@style/SplashTeme"/>
+        <activity
+            android:name=".activities.ImageViewActivity"
+            android:theme="@style/SplashTeme" />
+        <activity android:name=".activities.ChangePasswordActivity"
+            android:parentActivityName=".activities.MainActivity"/>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

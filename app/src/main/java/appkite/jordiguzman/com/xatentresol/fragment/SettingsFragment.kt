@@ -4,16 +4,19 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ChangePasswordActivity
+import appkite.jordiguzman.com.xatentresol.activities.MainActivity
 import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
+import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.toast
 
 
 class SettingsFragment : Fragment() {
@@ -35,16 +38,20 @@ class SettingsFragment : Fragment() {
             listview_setting.setOnItemClickListener{
                 _, _, position, _ ->
                   when(position){
-                      0 -> deleteUser()
-                      1 -> toast("Change password")
+                      0 -> alertDialog()
+                      1 -> changePassword()
                   }
 
             }
 
         }
 
-
         return view
+    }
+
+    private fun changePassword() {
+         startActivity<ChangePasswordActivity>()
+
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -53,6 +60,25 @@ class SettingsFragment : Fragment() {
         startActivity<SignInActivity>()
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun alertDialog(){
+        val dialog = LayoutInflater.from(activity).inflate(R.layout.custom_dialog, null)
+        val builder = activity?.let {
+            AlertDialog.Builder(it)
+                .setView(dialog)
+                .setTitle(R.string.delete_message)
+        }
+        val alertDialog = builder?.show()
+        alertDialog?.show()
+
+        dialog.btn_yes.setOnClickListener {
+             deleteUser()
+        }
+        dialog.btn_no.setOnClickListener {
+            startActivity<MainActivity>()
+            alertDialog?.dismiss()
+        }
+    }
 
 }
 

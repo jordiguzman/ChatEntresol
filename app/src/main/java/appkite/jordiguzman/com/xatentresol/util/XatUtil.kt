@@ -42,10 +42,14 @@ object XatUtil {
         }
     }
 
+
     fun deleteCurrentUser(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
          db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                  .delete()
+        /**
+         * The profile photos not delete. If the amount of these is great delete manually.
+         */
 
         val auth = FirebaseAuth.getInstance().currentUser
         auth?.delete()
@@ -150,3 +154,5 @@ object XatUtil {
 
 
 }
+
+

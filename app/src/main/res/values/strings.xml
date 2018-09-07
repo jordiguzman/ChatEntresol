@@ -19,6 +19,13 @@
     <string name="delete_user">Delete user</string>
     <string name="close">Close</string>
     <string name="close_message">Are you sure you want to get out of the app?</string>
+    <string name="delete_message">Are you sure you want to delete the acount?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="logo_app">Logo App</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="back">BACK</string>
+    <string name="your_email_here">Your email here</string>
+    <string name="to_reset_password">To reset password, enter your email, press the button and check mail to follow instruction.</string>
+    <string name="forgot_your_password">Forgot your password?</string>
 </resources>
