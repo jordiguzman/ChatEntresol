@@ -6,6 +6,7 @@ import android.text.TextUtils
 import appkite.jordiguzman.com.xatentresol.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_change_password.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 class ChangePasswordActivity : AppCompatActivity() {
@@ -26,7 +27,7 @@ class ChangePasswordActivity : AppCompatActivity() {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 toast("Check email to reset your password")
-                                //TODO reiniciar hacia signup
+                                startActivity<SignInActivity>()
                             } else {
                                 toast("Fail to send reset password email!")
                             }

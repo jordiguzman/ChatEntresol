@@ -19,7 +19,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".activities.SignInActivity"
-            android:label="Start firing messages" />
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.ChatActivity"
             android:parentActivityName=".activities.MainActivity"/>

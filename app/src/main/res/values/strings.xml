@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">XatEntresol</string>
-    <string name="home">Home</string>
     <string name="people">People</string>
     <string name="my_account">My Account</string>
 
@@ -28,4 +27,8 @@
     <string name="your_email_here">Your email here</string>
     <string name="to_reset_password">To reset password, enter your email, press the button and check mail to follow instruction.</string>
     <string name="forgot_your_password">Forgot your password?</string>
+    <string name="aviso">Aviso importante</string>
+    <string name="aviso_mensaje">Es indispensable que el email sea real. Si te equivocas o pones un email no existente no podrás entrar en la app y el usuario será borrado. Simplemente crea otro usuario con un email correcto</string>
+    <string name="no_volver_a_ver">No volver a ver</string>
+    <string name="ok">OK</string>
 </resources>

@@ -17,6 +17,7 @@ import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil.getCurrentUser
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_my_acount.*
 import kotlinx.android.synthetic.main.fragment_my_acount.view.*
@@ -24,6 +25,7 @@ import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.support.v4.toast
 import java.io.ByteArrayOutputStream
 
 
@@ -80,6 +82,7 @@ class MyAcountFragment : Fragment() {
                 isEditable = true
                 deactiveUserProfile(view)
             }
+
         }
 
         return view
@@ -119,15 +122,19 @@ class MyAcountFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
-        XatUtil.getCurrentUser { user ->
+        getCurrentUser { user ->
             if (this@MyAcountFragment.isVisible) {
                 editText_name.setText(user.name)
                 editText_bio.setText(user.bio)
-                if (!pictureJustChanged && user.profilePicturePath != null)
+                if (!pictureJustChanged && user.profilePicturePath != null){
                     GlideApp.with(this)
                             .load(StorageUtil.pathToReference(user.profilePicturePath))
                             .placeholder(R.drawable.ic_account_circle_black_24dp)
                             .into(imageView_profile_picture)
+                }else{
+                    toast("Es indispensable que añadas una foto a tu perfil")
+                }
+
 
             }
         }

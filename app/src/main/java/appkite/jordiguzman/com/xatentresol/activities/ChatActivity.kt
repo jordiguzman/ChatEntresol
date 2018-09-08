@@ -12,8 +12,8 @@ import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.AppConstants
-import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
@@ -45,6 +45,7 @@ class ChatActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+
 
 
         XatUtil.getCurrentUser {

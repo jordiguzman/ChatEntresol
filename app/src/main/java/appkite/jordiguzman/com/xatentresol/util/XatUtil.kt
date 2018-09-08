@@ -3,6 +3,7 @@ package appkite.jordiguzman.com.xatentresol.util
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import appkite.jordiguzman.com.xatentresol.model.*
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.ImageMessageItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
@@ -23,6 +24,8 @@ object XatUtil {
                 ?: throw NullPointerException("UID is null.")}")
 
 
+    private var mAuth: FirebaseAuth? = null
+
 
 
 
@@ -42,11 +45,38 @@ object XatUtil {
         }
     }
 
+    fun sendEmailVerification(context: Context){
+        mAuth = FirebaseAuth.getInstance()
+        val user = mAuth!!.currentUser
+        user!!.sendEmailVerification()
+                .addOnCompleteListener {task ->
+                    if (task.isSuccessful){
+                        //Toast.makeText(context, "Verification email sent to " + user.email!!, Toast.LENGTH_SHORT).show()
+
+                    }else{
+                        Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+    }
+    fun verifiedUserEmail(context: Context): Boolean{
+        mAuth = FirebaseAuth.getInstance()
+        val user = mAuth!!.currentUser
+        if (!user!!.isEmailVerified){
+            Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return  true
+    }
+
 
     fun deleteCurrentUser(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
          db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
                  .delete()
+        db.collection("chatChannels").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .delete()
+        chatChannelsCollectionRef.document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .delete()
         /**
          * The profile photos not delete. If the amount of these is great delete manually.
          */

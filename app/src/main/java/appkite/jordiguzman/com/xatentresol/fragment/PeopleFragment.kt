@@ -7,10 +7,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import appkite.jordiguzman.com.xatentresol.util.AppConstants
-import appkite.jordiguzman.com.xatentresol.activities.ChatActivity
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ChatActivity
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
+import appkite.jordiguzman.com.xatentresol.util.AppConstants
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
@@ -33,6 +33,7 @@ class PeopleFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
 
         userListenerRegistration = XatUtil.addUsersListener(this.activity!!, this::updateRecyclerView)
 

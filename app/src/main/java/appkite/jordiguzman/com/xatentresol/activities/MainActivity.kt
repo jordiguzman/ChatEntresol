@@ -1,12 +1,17 @@
 package appkite.jordiguzman.com.xatentresol.activities
 
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.support.design.internal.BottomNavigationItemView
+import android.support.design.internal.BottomNavigationMenuView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.fragment.MyAcountFragment
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
@@ -14,6 +19,7 @@ import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
+import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,11 +28,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         replaceFragment(PeopleFragment())
 
+
         navigation.itemBackgroundResource = R.color.colorPrimaryDark
+        //addBadge(0)
 
         chechFirstTimeUser()
 
+        if (!XatUtil.verifiedUserEmail(this))return
         navigation.setOnNavigationItemSelectedListener {
+
             when (it.itemId) {
                 R.id.navigation_people -> {
                         replaceFragment(PeopleFragment())
@@ -54,6 +64,22 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    @SuppressLint("PrivateResource")
+    private fun addBadge(position: Int){
+        val bottomMenu = navigation.getChildAt(0) as? BottomNavigationMenuView
+        val v = bottomMenu?.getChildAt(position) as? BottomNavigationItemView
+
+        val badge = LayoutInflater.from(this)
+                .inflate(R.layout.badge_layout, bottomMenu, false)
+
+        val badgeLayout: FrameLayout.LayoutParams = FrameLayout.LayoutParams(badge?.layoutParams).apply {
+            gravity = Gravity.CENTER_HORIZONTAL
+            topMargin = resources.getDimension(R.dimen.design_bottom_navigation_margin).toInt()
+            leftMargin = resources.getDimension(R.dimen.bagde_left_margin).toInt()
+
+        }
+        v?.addView(badge, badgeLayout)
+    }
 
     private fun alertDialog(){
         val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
@@ -74,11 +100,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun chechFirstTimeUser() {
-        XatUtil.getCurrentUser {
-            if (it.profilePicturePath == null) {
-                replaceFragment(MyAcountFragment())
+        if (!XatUtil.verifiedUserEmail(this)){
+            toast("Verifica tu cuenta en el correo")
+        }else{
+            XatUtil.getCurrentUser {
+                if (it.profilePicturePath == null) {
+                    navigation.selectedItemId = R.id.navigation_my_account
+                    replaceFragment(MyAcountFragment())
+                }
             }
         }
+
     }
 
 
