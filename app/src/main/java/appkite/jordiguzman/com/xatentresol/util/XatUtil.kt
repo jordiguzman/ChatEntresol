@@ -62,7 +62,7 @@ object XatUtil {
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
         if (!user!!.isEmailVerified){
-            Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Verifica tu cuenta en el correo.", Toast.LENGTH_SHORT).show()
             return false
         }
         return  true

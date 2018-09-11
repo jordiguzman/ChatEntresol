@@ -4,6 +4,7 @@
     <string name="my_account">My Account</string>
 
 
+
     <string name="my_name">My Name</string>
     <string name="my_bio">My Bio</string>
     <string name="save">Save</string>
@@ -31,4 +32,5 @@
     <string name="aviso_mensaje">Es indispensable que el email sea real. Si te equivocas o pones un email no existente no podrás entrar en la app y el usuario será borrado. Simplemente crea otro usuario con un email correcto</string>
     <string name="no_volver_a_ver">No volver a ver</string>
     <string name="ok">OK</string>
+    <string name="verifica_correo">Verifica tu cuenta en el correo.</string>
 </resources>

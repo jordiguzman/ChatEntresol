@@ -19,7 +19,8 @@ import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         chechFirstTimeUser()
 
-        if (!XatUtil.verifiedUserEmail(this))return
+
         navigation.setOnNavigationItemSelectedListener {
 
             when (it.itemId) {
@@ -101,7 +102,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun chechFirstTimeUser() {
         if (!XatUtil.verifiedUserEmail(this)){
-            toast("Verifica tu cuenta en el correo")
+            longSnackbar(constraint_layout_main, getString(R.string.verifica_correo))
+            SignInActivity.firstTime = true
+            startActivity<SignInActivity>()
         }else{
             XatUtil.getCurrentUser {
                 if (it.profilePicturePath == null) {

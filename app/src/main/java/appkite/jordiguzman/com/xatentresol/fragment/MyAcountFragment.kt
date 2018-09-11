@@ -132,6 +132,7 @@ class MyAcountFragment : Fragment() {
                             .placeholder(R.drawable.ic_account_circle_black_24dp)
                             .into(imageView_profile_picture)
                 }else{
+                    if (!pictureJustChanged)
                     toast("Es indispensable que añadas una foto a tu perfil")
                 }
 

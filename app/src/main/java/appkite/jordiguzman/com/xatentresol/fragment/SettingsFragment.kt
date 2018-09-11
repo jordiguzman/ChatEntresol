@@ -31,6 +31,7 @@ class SettingsFragment : Fragment() {
             val adapter: ArrayAdapter<String>?
             list.add("Delete user")
             list.add("Change password")
+            list.add("Push notification")
 
             adapter = ArrayAdapter(activity,android.R.layout.simple_list_item_1, list )
             listview_setting.adapter = adapter
@@ -40,6 +41,7 @@ class SettingsFragment : Fragment() {
                   when(position){
                       0 -> alertDialog()
                       1 -> changePassword()
+                      3 -> pushNotification()
                   }
 
             }
@@ -47,6 +49,10 @@ class SettingsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun pushNotification() {
+
     }
 
     private fun changePassword() {

@@ -23,7 +23,9 @@ class SignInActivity : AppCompatActivity() {
 
     private val RC_SIGN_IN = 1
     var visible: Boolean? = false
-
+    companion object {
+        var firstTime: Boolean? = false
+    }
     private val signInProviders =
             listOf(AuthUI.IdpConfig.EmailBuilder()
                     .setAllowNewAccounts(true)
@@ -35,17 +37,15 @@ class SignInActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_in)
 
         readShared()
-        if (!visible!!){
+        if (!visible!! && firstTime!!){
             alertDialog()
         }
-
         account_sign_in.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                     .setAvailableProviders(signInProviders)
                     .setLogo(R.drawable.ic_logo)
                     .build()
             startActivityForResult(intent, RC_SIGN_IN)
-
         }
     }
 
@@ -84,16 +84,14 @@ class SignInActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 val progressDialog = indeterminateProgressDialog("Setting up your account")
                 XatUtil.initCurrentUserIfFirstTime {
-                    XatUtil.sendEmailVerification(this)
+                    if (!XatUtil.verifiedUserEmail(this)){
+                        XatUtil.sendEmailVerification(this)
+                    }
                     startActivity(intentFor<MainActivity>().newTask().clearTask())
-
                     progressDialog.dismiss()
-
                 }
-
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 if (response == null) return
-
                 when (response.error?.errorCode) {
                     ErrorCodes.NO_NETWORK ->
                         longSnackbar(constraint_layout, "No network")
