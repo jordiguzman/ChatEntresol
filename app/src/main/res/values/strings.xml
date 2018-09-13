@@ -4,7 +4,6 @@
     <string name="my_account">My Account</string>
 
 
-
     <string name="my_name">My Name</string>
     <string name="my_bio">My Bio</string>
     <string name="save">Save</string>
@@ -33,4 +32,8 @@
     <string name="no_volver_a_ver">No volver a ver</string>
     <string name="ok">OK</string>
     <string name="verifica_correo">Verifica tu cuenta en el correo.</string>
+
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_name" translatable="true">News</string>
 </resources>

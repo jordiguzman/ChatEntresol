@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:tools="http://schemas.android.com/tools"
     package="appkite.jordiguzman.com.xatentresol">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTeme" />
@@ -20,10 +22,18 @@
             android:label="@string/app_name" />
         <activity
             android:name=".activities.SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
-            android:name=".activities.ChatActivity"
-            android:parentActivityName=".activities.MainActivity"/>
+            android:name=".activities.ChatActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity"/>
+            <intent-filter>
+                <action android:name="ChatActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.KickActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,17 +44,47 @@
         <activity
             android:name=".activities.ImageViewActivity"
             android:theme="@style/SplashTeme" />
-        <activity android:name=".activities.ChangePasswordActivity"
-            android:parentActivityName=".activities.MainActivity"/>
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:parentActivityName=".activities.MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <service android:name=".util.notifications.MyFCMClass">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_logo" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+
+        <service android:name=".service.MyFirebaseMessagingService"
+            android:exported="true"
+            android:permission="@string/app_name">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+            <meta-data
+                android:name="firebase_messaging_auto_init_enabled"
+                android:value="false" />
+
+
         </service>
+        <service android:name=".service.MyFirebaseInstanceIDService"
+            android:exported="true"
+            android:permission="@string/app_name">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+
+
+        <activity android:name=".activities.MyAcountActivity">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".activities.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

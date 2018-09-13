@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -5,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/constraint_layout_fragment_my_acount"
-    tools:context="appkite.jordiguzman.com.xatentresol.fragment.MyAcountFragment">
+    tools:context=".activities.MyAcountActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_profile_picture"
@@ -123,3 +124,4 @@
         tools:targetApi="lollipop" />
 
 </android.support.constraint.ConstraintLayout>
+

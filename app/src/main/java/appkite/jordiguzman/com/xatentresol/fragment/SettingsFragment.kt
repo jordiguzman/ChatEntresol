@@ -12,14 +12,20 @@ import android.widget.ArrayAdapter
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.ChangePasswordActivity
 import appkite.jordiguzman.com.xatentresol.activities.MainActivity
+import appkite.jordiguzman.com.xatentresol.activities.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import org.jetbrains.anko.support.v4.startActivity
+import java.util.*
+
+
 
 
 class SettingsFragment : Fragment() {
+
+
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +37,7 @@ class SettingsFragment : Fragment() {
             val adapter: ArrayAdapter<String>?
             list.add("Delete user")
             list.add("Change password")
+            list.add("My acount")
             list.add("Push notification")
 
             adapter = ArrayAdapter(activity,android.R.layout.simple_list_item_1, list )
@@ -41,6 +48,7 @@ class SettingsFragment : Fragment() {
                   when(position){
                       0 -> alertDialog()
                       1 -> changePassword()
+                      2 -> toMyAcount()
                       3 -> pushNotification()
                   }
 
@@ -51,7 +59,15 @@ class SettingsFragment : Fragment() {
         return view
     }
 
+    private fun toMyAcount() {
+        startActivity<MyAcountActivity>()
+    }
+
+
     private fun pushNotification() {
+
+
+
 
     }
 

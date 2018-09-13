@@ -5,7 +5,7 @@ import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.Message
 import com.google.firebase.auth.FirebaseAuth
- import com.xwray.groupie.kotlinandroidextensions.Item
+import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.item_text_message.*
 import org.jetbrains.anko.backgroundResource

@@ -9,6 +9,7 @@ import appkite.jordiguzman.com.xatentresol.recyclerview.item.ImageMessageItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.TextMessageItem
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -25,6 +26,8 @@ object XatUtil {
 
 
     private var mAuth: FirebaseAuth? = null
+    private var mDatabase: DatabaseReference? = null
+
 
 
 
@@ -183,6 +186,25 @@ object XatUtil {
     }
 
 
+
+
+
+    //Region FCM
+    fun getFCMRegistrtionTokens(onComplete: (tokens: MutableList<String>) -> Unit){
+        currentUserDocRef.get().addOnSuccessListener {
+            val user= it.toObject(User::class.java)!!
+            onComplete(user.registrationTokens)
+        }
+    }
+
+    fun setFCMRegistrtionTokens(registrationTokens: MutableList<String>){
+        currentUserDocRef.update(mapOf("registrationTokens" to registrationTokens))
+    }
+    //endRegion FCM
+
+
 }
+
+
 
 

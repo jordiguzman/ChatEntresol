@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.service.MyFirebaseInstanceIDService
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.custom_dialog_notice.view.*
 import org.jetbrains.anko.clearTask
@@ -88,6 +90,8 @@ class SignInActivity : AppCompatActivity() {
                         XatUtil.sendEmailVerification(this)
                     }
                     startActivity(intentFor<MainActivity>().newTask().clearTask())
+                    val registrtionToken = FirebaseInstanceId.getInstance().token
+                    MyFirebaseInstanceIDService.addTokenXat(registrtionToken)
                     progressDialog.dismiss()
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {

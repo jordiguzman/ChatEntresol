@@ -19,6 +19,11 @@ class TextMessageItem( val message: TextMessage,
 
 
 
+
+
+
+
+
     override fun getLayout()= R.layout.item_text_message
 
     override fun isSameAs(other: com.xwray.groupie.Item<*>?): Boolean {

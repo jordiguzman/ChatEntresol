@@ -3,8 +3,10 @@ package appkite.jordiguzman.com.xatentresol.activities
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import appkite.jordiguzman.com.xatentresol.R
@@ -16,6 +18,7 @@ import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.messaging.FirebaseMessaging
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
@@ -37,14 +40,19 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messagesListenerRegistration: ListenerRegistration
     private var shouldInitRecyclerView = true
     private lateinit var messagesSection: Section
+    val firebaseMessage = FirebaseMessaging.getInstance()
 
 
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+
+        firebaseMessage.isAutoInitEnabled
 
 
 
@@ -61,6 +69,8 @@ class ChatActivity : AppCompatActivity() {
 
             imageView_send.setOnClickListener {
                 if (editText_message.text.isEmpty())return@setOnClickListener
+
+
                 val messageToSend =
                         TextMessage(editText_message.text.toString(), Calendar.getInstance().time,
                                 FirebaseAuth.getInstance().currentUser!!.uid,
@@ -83,6 +93,7 @@ class ChatActivity : AppCompatActivity() {
 
 
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SELECTED_IMAGE && resultCode == Activity.RESULT_OK &&
                 data != null && data.data != null){
@@ -93,6 +104,7 @@ class ChatActivity : AppCompatActivity() {
             val outputStream = ByteArrayOutputStream()
             selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             val selectedImageBytes = outputStream.toByteArray()
+
             StorageUtil.uploadMessageImage(selectedImageBytes){ imagePath ->
                 val messageToSend =
                         ImageMessage(imagePath,  Calendar.getInstance().time,

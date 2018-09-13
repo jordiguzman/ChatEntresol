@@ -13,7 +13,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.fragment.MyAcountFragment
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
 import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
@@ -24,17 +23,22 @@ import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity() {
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         replaceFragment(PeopleFragment())
 
-
+        if (MyAcountActivity.fromMyAcount){
+            replaceFragment(SettingsFragment())
+            navigation.selectedItemId = R.id.navigation_settings
+        }
+        
         navigation.itemBackgroundResource = R.color.colorPrimaryDark
         //addBadge(0)
 
         chechFirstTimeUser()
-
 
         navigation.setOnNavigationItemSelectedListener {
 
@@ -43,10 +47,7 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(PeopleFragment())
                     true
                 }
-                R.id.navigation_my_account -> {
-                    replaceFragment(MyAcountFragment())
-                    true
-                }
+
                 R.id.navigation_settings ->{
                     replaceFragment(SettingsFragment())
                     true
@@ -105,13 +106,6 @@ class MainActivity : AppCompatActivity() {
             longSnackbar(constraint_layout_main, getString(R.string.verifica_correo))
             SignInActivity.firstTime = true
             startActivity<SignInActivity>()
-        }else{
-            XatUtil.getCurrentUser {
-                if (it.profilePicturePath == null) {
-                    navigation.selectedItemId = R.id.navigation_my_account
-                    replaceFragment(MyAcountFragment())
-                }
-            }
         }
 
     }
