@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.Menu
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
@@ -29,6 +30,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         replaceFragment(PeopleFragment())
+
+        setSupportActionBar(toolbar_main)
+
+
+
+
+
 
         if (MyAcountActivity.fromMyAcount){
             replaceFragment(SettingsFragment())
@@ -66,6 +74,14 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
     @SuppressLint("PrivateResource")
     private fun addBadge(position: Int){
         val bottomMenu = navigation.getChildAt(0) as? BottomNavigationMenuView

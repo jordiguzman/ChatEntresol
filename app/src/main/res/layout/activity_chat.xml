@@ -8,6 +8,62 @@
     tools:context="appkite.jordiguzman.com.xatentresol.activities.ChatActivity">
 
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_chat_activity"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:theme="@style/AppTheme"
+            app:popupTheme="@style/PopupMenu">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_chat_user"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/profile_image_user"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="@android:color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_user_main_activity"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="RtlHardcoded" />
+
+                <TextView
+                    android:id="@+id/tv_user_main_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/bowlby_one"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_messages"
@@ -17,7 +73,7 @@
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout_message"
@@ -51,8 +107,8 @@
             android:layout_toEndOf="@id/fab_send_image"
             android:background="@drawable/edit_text_rounded"
             android:elevation="2dp"
-            android:inputType="textCapSentences"
             android:hint="@string/fire_your_message"
+            android:inputType="textCapSentences"
             android:padding="8dp"
             tools:targetApi="lollipop" />
 
@@ -63,10 +119,10 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="24dp"
+            android:contentDescription="@string/button_send"
             android:elevation="2dp"
             app:srcCompat="@drawable/ic_send_black_24dp"
-            tools:targetApi="lollipop"
-            android:contentDescription="@string/button_send" />
+            tools:targetApi="lollipop" />
     </RelativeLayout>
 
 

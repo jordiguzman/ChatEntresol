@@ -14,6 +14,7 @@ import appkite.jordiguzman.com.xatentresol.activities.ChangePasswordActivity
 import appkite.jordiguzman.com.xatentresol.activities.MainActivity
 import appkite.jordiguzman.com.xatentresol.activities.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
+import appkite.jordiguzman.com.xatentresol.java.ListUsersActivity
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
@@ -66,6 +67,7 @@ class SettingsFragment : Fragment() {
 
     private fun pushNotification() {
 
+        startActivity<ListUsersActivity>()
 
 
 
