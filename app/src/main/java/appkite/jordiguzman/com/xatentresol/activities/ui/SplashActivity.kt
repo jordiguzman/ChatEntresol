@@ -1,7 +1,8 @@
-package appkite.jordiguzman.com.xatentresol.activities
+package appkite.jordiguzman.com.xatentresol.activities.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.startActivity
 

@@ -10,10 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.activities.ChangePasswordActivity
-import appkite.jordiguzman.com.xatentresol.activities.MainActivity
-import appkite.jordiguzman.com.xatentresol.activities.MyAcountActivity
-import appkite.jordiguzman.com.xatentresol.activities.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
 import appkite.jordiguzman.com.xatentresol.java.ListUsersActivity
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.custom_dialog.view.*
@@ -40,6 +41,7 @@ class SettingsFragment : Fragment() {
             list.add("Change password")
             list.add("My acount")
             list.add("Push notification")
+            list.add("User's list")
 
             adapter = ArrayAdapter(activity,android.R.layout.simple_list_item_1, list )
             listview_setting.adapter = adapter
@@ -51,6 +53,7 @@ class SettingsFragment : Fragment() {
                       1 -> changePassword()
                       2 -> toMyAcount()
                       3 -> pushNotification()
+                      4 -> userList()
                   }
 
             }
@@ -60,17 +63,17 @@ class SettingsFragment : Fragment() {
         return view
     }
 
+    private fun userList() {
+        startActivity<ListUsersActivity>()
+    }
+
     private fun toMyAcount() {
         startActivity<MyAcountActivity>()
     }
 
 
     private fun pushNotification() {
-
-        startActivity<ListUsersActivity>()
-
-
-
+        startActivity<NotificationsSettingsActivity>()
     }
 
     private fun changePassword() {

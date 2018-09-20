@@ -5,7 +5,7 @@
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="appkite.jordiguzman.com.xatentresol.activities.SignInActivity">
+    tools:context="appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity">
 
     <TextView
         android:id="@+id/textView"

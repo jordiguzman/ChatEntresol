@@ -20,7 +20,10 @@ object StorageUtil {
         ref.putBytes(imageBytes)
                 .addOnSuccessListener {
                     onSuccess(ref.path)
+
+
                 }
+
     }
 
     fun uploadMessageImage(imageBytes: ByteArray,
@@ -33,6 +36,9 @@ object StorageUtil {
     }
 
     fun pathToReference(path: String) = storageInstance.getReference(path)
+
+
+
 
 
 

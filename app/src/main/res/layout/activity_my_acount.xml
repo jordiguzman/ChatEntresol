@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/constraint_layout_fragment_my_acount"
-    tools:context=".activities.MyAcountActivity">
+    tools:context=".activities.settings.MyAcountActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_profile_picture"

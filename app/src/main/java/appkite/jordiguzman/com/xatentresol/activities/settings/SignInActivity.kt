@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol.activities
+package appkite.jordiguzman.com.xatentresol.activities.settings
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
 import appkite.jordiguzman.com.xatentresol.service.MyFirebaseInstanceIDService
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI

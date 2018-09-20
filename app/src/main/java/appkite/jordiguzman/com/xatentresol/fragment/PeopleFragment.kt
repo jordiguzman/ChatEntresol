@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.activities.ChatActivity
+import appkite.jordiguzman.com.xatentresol.activities.chat.ChatActivity
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
 import appkite.jordiguzman.com.xatentresol.util.AppConstants
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
@@ -74,7 +74,8 @@ class PeopleFragment : Fragment() {
             startActivity<ChatActivity>(
                     AppConstants.USER_NAME to item.person.name,
                     AppConstants.USER_ID to item.userId,
-                    AppConstants.USER_PATH_PHOTO to item.person.profilePicturePath.toString()
+                    AppConstants.USER_PATH_PHOTO to item.person.profilePicturePath!!
+
 
 
             )

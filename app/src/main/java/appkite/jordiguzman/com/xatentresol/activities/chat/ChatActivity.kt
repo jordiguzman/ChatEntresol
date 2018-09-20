@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol.activities
+package appkite.jordiguzman.com.xatentresol.activities.chat
 
 import android.app.Activity
 import android.content.Intent
@@ -7,11 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
@@ -26,7 +25,6 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
-import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -37,9 +35,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var currentChannelId: String
     private lateinit var currentUser: User
     private lateinit var otherUserId: String
-    private val pathInit = "gs://xatentresol-146fe.appspot.com"
-
-
     private lateinit var messagesListenerRegistration: ListenerRegistration
     private var shouldInitRecyclerView = true
     private lateinit var messagesSection: Section
@@ -53,27 +48,15 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         tv_user_main_activity.text = intent.getStringExtra(AppConstants.USER_NAME)
-        val path = intent.getStringExtra(AppConstants.USER_PATH_PHOTO)
-        Log.d("path", pathInit.plus(path))
 
-
-
-         GlideApp.with(this)
-                .load("https://firebasestorage.googleapis.com/v0/b/xatentresol-146fe.appspot.com/o/" +
-                        "FhnQbzHFTzci0TPShGPO75v9FUm1%2FprofilePictures%2Faef13195-7030-3bd4-a576-1c27cc59db63?alt=media&token=ea8a459c-b7dc-43d0-afa6-70ffdd411951")
-                .placeholder(R.drawable.ic_account_circle_black_24dp)
-                .into(iv_chat_user)
         firebaseMessage.isAutoInitEnabled
-
-
-
-
 
         XatUtil.getCurrentUser {
             currentUser = it
         }
 
         otherUserId = intent.getStringExtra(AppConstants.USER_ID)
+
         XatUtil.getOrCreateChatChannel(otherUserId) { channelId ->
             currentChannelId = channelId
 
@@ -93,7 +76,8 @@ class ChatActivity : AppCompatActivity() {
 
             }
             fab_send_image.setOnClickListener {
-                toast("Recuerda que las fotos de cámara se tienen que hacer en panorámico")
+                Snackbar.make(containes_chat, "Recuerda que las fotos de cámara se tienen que hacer en panorámico", Snackbar.LENGTH_LONG).show()
+                //toast("Recuerda que las fotos de cámara se tienen que hacer en panorámico")
                 val intent = Intent().apply {
                     type = "image/*"
                     action = Intent.ACTION_GET_CONTENT

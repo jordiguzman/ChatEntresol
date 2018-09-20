@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol.activities
+package appkite.jordiguzman.com.xatentresol.activities.ui
 
 
 import android.annotation.SuppressLint
@@ -12,17 +12,22 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
 import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.startActivity
 
 class MainActivity : AppCompatActivity() {
+
 
 
 
@@ -79,6 +84,20 @@ class MainActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId!!){
+            R.id.action_subscribe -> suscribeTopic()
+
+        }
+        return super.onOptionsItemSelected(item)
+
+    }
+
+    private fun suscribeTopic() {
+        longSnackbar(constraint_layout_main, "Te has suscrito a las noticias de L'Entresòl")
+         FirebaseMessaging.getInstance().subscribeToTopic("globalMessages")
     }
 
 

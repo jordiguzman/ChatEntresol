@@ -1,4 +1,4 @@
-package appkite.jordiguzman.com.xatentresol.activities
+package appkite.jordiguzman.com.xatentresol.activities.settings
 
 import android.app.Activity
 import android.content.Intent
@@ -14,7 +14,6 @@ import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.activity_my_acount.*
-
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.intentFor
@@ -54,10 +53,11 @@ class MyAcountActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (::selectedImageBytes.isInitialized)
-                StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
+                StorageUtil.uploadProfilePhoto(selectedImageBytes){imagePath->
                     XatUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), imagePath)
                 }
+
             else
                 XatUtil.updateCurrentUser(editText_name.text.toString(),
                         editText_bio.text.toString(), null)
@@ -115,11 +115,13 @@ class MyAcountActivity : AppCompatActivity() {
 
             editText_name.setText(user.name)
             editText_bio.setText(user.bio)
+
             if (!pictureJustChanged && user.profilePicturePath != null) {
                 GlideApp.with(this)
                         .load(StorageUtil.pathToReference(user.profilePicturePath))
                         .placeholder(R.drawable.ic_account_circle_black_24dp)
                         .into(imageView_profile_picture)
+
             } else {
                 if (!pictureJustChanged)
                     toast("Es indispensable que añadas una foto a tu perfil")

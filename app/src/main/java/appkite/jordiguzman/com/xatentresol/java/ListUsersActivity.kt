@@ -31,15 +31,24 @@ class ListUsersActivity : AppCompatActivity() {
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful){
                 for (document in task.result){
-                    userList.add(document.id)
-                    tv_users_java.append(document.id.plus("\n"))
+                    userList.add(document.get("name").toString())
+
 
                 }
-
+                showUsers()
             }
         }
     }
 
+    private fun showUsers() {
+
+         for (i: Int in userList.indices){
+             tv_users_java.append(userList[i].plus("\n"))
+         }
+    }
+
 
 }
+
+
 

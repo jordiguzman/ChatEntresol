@@ -3,7 +3,7 @@ package appkite.jordiguzman.com.xatentresol.recyclerview.item
 import android.content.Context
 import android.content.Intent
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.activities.ImageViewActivity
+import appkite.jordiguzman.com.xatentresol.activities.ui.ImageViewActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil

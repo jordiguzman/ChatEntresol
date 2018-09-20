@@ -9,7 +9,6 @@ import appkite.jordiguzman.com.xatentresol.recyclerview.item.ImageMessageItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.TextMessageItem
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -24,22 +23,17 @@ object XatUtil {
         get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
                 ?: throw NullPointerException("UID is null.")}")
 
-
     private var mAuth: FirebaseAuth? = null
-    private var mDatabase: DatabaseReference? = null
-
-
-
-
 
     private val chatChannelsCollectionRef = firestoreInstance.collection("chatChannels")
+    private val chatChannelsCollectionRefToUsers = firestoreInstance.collection("chatChannelsToUsers")
 
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
         currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
             if (!documentSnapshot.exists()) {
                 val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                        "", null, mutableListOf())
+                        "", null,  mutableListOf())
                 currentUserDocRef.set(newUser).addOnSuccessListener {
                     onComplete()
                 }
@@ -93,8 +87,12 @@ object XatUtil {
         val userFieldMap = mutableMapOf<String, Any>()
         if (name.isNotBlank()) userFieldMap["name"] = name
         if (bio.isNotBlank()) userFieldMap["bio"] = bio
-        if (profilePicturePath != null)
+        if (profilePicturePath != null){
             userFieldMap["profilePicturePath"] = profilePicturePath
+
+        }
+
+
         currentUserDocRef.update(userFieldMap)
     }
 
@@ -115,7 +113,7 @@ object XatUtil {
         return firestoreInstance.collection("users")
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
-                        Log.e("FIRESTORE", "Users listener error.", firebaseFirestoreException)
+                        Log.e("XatEntresol", "Users listener error.", firebaseFirestoreException)
                         return@addSnapshotListener
                     }
 
@@ -129,6 +127,8 @@ object XatUtil {
     }
 
     fun removeListener(registration: ListenerRegistration) = registration.remove()
+
+
 
     fun getOrCreateChatChannel(otherUserId: String,
                                onComplete: (channelId: String) -> Unit) {
@@ -163,7 +163,7 @@ object XatUtil {
                 .orderBy("time")
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
-                        Log.e("FIRESTORE", "ChatMessagesListener error.", firebaseFirestoreException)
+                        Log.e("XatEntresol", "ChatMessagesListener error.", firebaseFirestoreException)
                         return@addSnapshotListener
                     }
 

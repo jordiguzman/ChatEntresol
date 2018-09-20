@@ -14,18 +14,18 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".activities.ui.SplashActivity"
             android:theme="@style/SplashTeme" />
         <activity
-            android:name=".activities.MainActivity"
-            android:label="@string/app_name"/>
+            android:name=".activities.ui.MainActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name=".activities.SignInActivity"
+            android:name=".activities.settings.SignInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.ChatActivity">
+        <activity android:name=".activities.chat.ChatActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.ui.MainActivity" />
 
             <intent-filter>
                 <action android:name="ChatActivity" />
@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.KickActivity">
+        <activity android:name=".activities.ui.KickActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,11 +41,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ImageViewActivity"
+            android:name=".activities.ui.ImageViewActivity"
             android:theme="@style/SplashTeme" />
         <activity
-            android:name=".activities.ChangePasswordActivity"
-            android:parentActivityName=".activities.MainActivity" />
+            android:name=".activities.settings.ChangePasswordActivity"
+            android:parentActivityName=".activities.ui.MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -78,12 +78,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.MyAcountActivity">
+        <activity android:name=".activities.settings.MyAcountActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.ui.MainActivity" />
         </activity>
-        <activity android:name=".java.ListUsersActivity"></activity>
+        <activity android:name=".java.ListUsersActivity" />
+        <activity android:name=".activities.settings.NotificationsSettingsActivity"></activity>
     </application>
 
 </manifest>
