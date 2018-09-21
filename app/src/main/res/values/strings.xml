@@ -38,4 +38,5 @@
     <string name="default_notification_channel_name" translatable="true">News</string>
     <string name="suscribir_a_noticias">Suscribir a noticias</string>
     <string name="profile_image_user">Profile Image User</string>
+    <string name="logo_settings">Logo Settings</string>
 </resources>

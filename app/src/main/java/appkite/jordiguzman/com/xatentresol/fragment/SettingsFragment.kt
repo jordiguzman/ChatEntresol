@@ -1,5 +1,6 @@
 package appkite.jordiguzman.com.xatentresol.fragment
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -8,61 +9,73 @@ import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
-import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
+import appkite.jordiguzman.com.xatentresol.adapter.SettingsAdapter
 import appkite.jordiguzman.com.xatentresol.java.ListUsersActivity
+import appkite.jordiguzman.com.xatentresol.model.ItemSettings
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import org.jetbrains.anko.support.v4.startActivity
-import java.util.*
-
-
 
 
 class SettingsFragment : Fragment() {
 
 
+    private var listTitle = arrayOf(
+            "Delete user",
+            "Change password",
+            "My acount",
+            "Push notifications")
+    private var listLogo = intArrayOf(
+            R.drawable.ic_delete,
+            R.drawable.ic_change,
+            R.drawable.ic_vpn_key_black_24dp,
+            R.drawable.ic_notifications)
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+
+            @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
        val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
         view.apply {
-             val list = ArrayList<String>()
-            val adapter: ArrayAdapter<String>?
-            list.add("Delete user")
-            list.add("Change password")
-            list.add("My acount")
-            list.add("Push notification")
-            list.add("User's list")
 
-            adapter = ArrayAdapter(activity,android.R.layout.simple_list_item_1, list )
-            listview_setting.adapter = adapter
+            val settingsAdapter: SettingsAdapter
+            val arraySettings: ArrayList<ItemSettings> = populateList()
 
-            listview_setting.setOnItemClickListener{
-                _, _, position, _ ->
-                  when(position){
-                      0 -> alertDialog()
-                      1 -> changePassword()
-                      2 -> toMyAcount()
-                      3 -> pushNotification()
-                      4 -> userList()
-                  }
+            settingsAdapter = SettingsAdapter(view.context, arraySettings)
+            listview_setting.adapter = settingsAdapter
 
+            listview_setting.setOnItemClickListener { _, _, position, _ ->
+                when (position) {
+                    0 -> alertDialog()
+                    1 -> changePassword()
+                    2 -> toMyAcount()
+                    3 -> pushNotification()
+                    4 -> userList()
+                }
             }
-
         }
-
         return view
     }
 
+    private fun populateList(): ArrayList<ItemSettings>{
+        val list = ArrayList<ItemSettings>()
+
+        for (i in listTitle.indices){
+            val itemSettings = ItemSettings()
+            itemSettings.setLogo(listLogo[i])
+            itemSettings.setTitles(listTitle[i])
+            list.add(itemSettings)
+        }
+
+        return list
+    }
     private fun userList() {
         startActivity<ListUsersActivity>()
     }
@@ -87,6 +100,7 @@ class SettingsFragment : Fragment() {
         startActivity<SignInActivity>()
     }
 
+    @SuppressLint("InflateParams")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun alertDialog(){
         val dialog = LayoutInflater.from(activity).inflate(R.layout.custom_dialog, null)
@@ -102,11 +116,9 @@ class SettingsFragment : Fragment() {
              deleteUser()
         }
         dialog.btn_no.setOnClickListener {
-            startActivity<MainActivity>()
             alertDialog?.dismiss()
         }
     }
 
 }
-
 

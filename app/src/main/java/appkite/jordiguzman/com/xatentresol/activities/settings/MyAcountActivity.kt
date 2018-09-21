@@ -18,7 +18,6 @@ import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
-import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 
 class MyAcountActivity : AppCompatActivity() {
@@ -124,7 +123,8 @@ class MyAcountActivity : AppCompatActivity() {
 
             } else {
                 if (!pictureJustChanged)
-                    toast("Es indispensable que añadas una foto a tu perfil")
+                    longSnackbar(constraint_layout_fragment_my_acount, "Es indispensable que añadas una foto a tu perfil")
+                    //toast("Es indispensable que añadas una foto a tu perfil")
             }
         }
     }
