@@ -1,13 +1,16 @@
 package appkite.jordiguzman.com.xatentresol.activities.chat
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import appkite.jordiguzman.com.xatentresol.R
@@ -26,10 +29,14 @@ import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.File.separator
+import java.text.SimpleDateFormat
 import java.util.*
 
 
-private const val RC_SELECTED_IMAGE = 2
+private const val RC_IMAGE_GALLERY = 2
+private const val RC_IMAGE_CAMERA = 1
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var currentChannelId: String
@@ -39,6 +46,8 @@ class ChatActivity : AppCompatActivity() {
     private var shouldInitRecyclerView = true
     private lateinit var messagesSection: Section
     val firebaseMessage = FirebaseMessaging.getInstance()
+    private val MY_PHOTO = "my_photo"
+    private var outputFileUri: Uri? = null
 
 
 
@@ -76,23 +85,61 @@ class ChatActivity : AppCompatActivity() {
 
             }
             fab_send_image.setOnClickListener {
-                Snackbar.make(containes_chat, "Recuerda que las fotos de cámara se tienen que hacer en panorámico", Snackbar.LENGTH_LONG).show()
-                //toast("Recuerda que las fotos de cámara se tienen que hacer en panorámico")
-                val intent = Intent().apply {
-                    type = "image/*"
-                    action = Intent.ACTION_GET_CONTENT
-                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
-                }
-                startActivityForResult(Intent.createChooser(intent, "Select image"), RC_SELECTED_IMAGE)
+                openImageIntent()
+
             }
         }
+    }
+
+    private fun openImageIntent() {
+
+        val timeStamp = SimpleDateFormat("dd-MM-yyyy_HHmmss", Locale.ROOT)
+                .format(Date())
+        val imageFileName = MY_PHOTO + timeStamp + "_"
+        // Determine Uri of camera image to save.
+        val mSeparator = separator.plus("MyDir").plus(separator)
+        val root = File(Environment.DIRECTORY_PICTURES + mSeparator)
+        root.mkdirs()
+        val fname = imageFileName
+        val sdImageMainDirectory = File(root, fname)
+        outputFileUri = Uri.fromFile(sdImageMainDirectory)
+
+        // Camera.
+        val cameraIntents = ArrayList<Intent>()
+        val captureIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+        val packageManager = packageManager
+        val listCam = packageManager.queryIntentActivities(captureIntent, 0)
+        for (res in listCam) {
+            val packageName = res.activityInfo.packageName
+            val intent = Intent(captureIntent)
+            intent.component = ComponentName(packageName, res.activityInfo.name)
+            intent.`package` = packageName
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
+            cameraIntents.add(intent)
+        }
+
+        // Filesystem.
+        val intent = Intent().apply {
+            type = "image/*"
+            action = Intent.ACTION_GET_CONTENT
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+        }
+
+
+        // Chooser of filesystem options.
+        val chooserIntent = Intent.createChooser(intent, "Select Source")
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray<Parcelable>())
+
+        startActivityForResult(chooserIntent, RC_IMAGE_GALLERY)
     }
 
 
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == RC_SELECTED_IMAGE && resultCode == Activity.RESULT_OK &&
+        if (requestCode == RC_IMAGE_GALLERY && resultCode == Activity.RESULT_OK &&
                 data != null && data.data != null){
             val selectedImagePath = data.data
 
@@ -111,8 +158,12 @@ class ChatActivity : AppCompatActivity() {
 
             }
 
+        }else if (requestCode != RC_IMAGE_GALLERY && resultCode == Activity.RESULT_OK &&
+                data != null && data.data != null){
+            //TODO captura de la imagen, metodos para ponerla en vertical y guardar en storage
         }
     }
+
 
 
 
@@ -139,3 +190,5 @@ class ChatActivity : AppCompatActivity() {
         recycler_view_messages.scrollToPosition(recycler_view_messages.adapter.itemCount - 1)
     }
 }
+
+

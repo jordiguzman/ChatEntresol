@@ -11,6 +11,11 @@
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>
 
+    <style name="AppThemeAppBar" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
     <style name="AppTheme.ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">
         <!--<item name="actionOverflowButtonStyle">@style/AppTheme.OverflowButtonStyle</item>-->
         <item name="android:textColor">@android:color/black</item> // doesn't work
@@ -46,6 +51,15 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+
+    <style name="TextInputEditText">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="counterOverride">
+        <item name="android:textColor">#ff0000</item>
     </style>
 
 </resources>

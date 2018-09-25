@@ -17,16 +17,16 @@ import com.xwray.groupie.kotlinandroidextensions.Item
 
 object XatUtil {
 
-    private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+    private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     private val currentUserDocRef: DocumentReference
-        get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
+        get() = chatInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
                 ?: throw NullPointerException("UID is null.")}")
 
     private var mAuth: FirebaseAuth? = null
+    private var userList = mutableListOf<String>()
 
-    private val chatChannelsCollectionRef = firestoreInstance.collection("chatChannels")
-    private val chatChannelsCollectionRefToUsers = firestoreInstance.collection("chatChannelsToUsers")
+    private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
 
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
@@ -109,8 +109,31 @@ object XatUtil {
 
 
     }
+    fun getAllUsers(){
+        val pathUser = "users"
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection(pathUser)
+        userRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                for (document in task.result){
+                    userList.add(document.id)
+
+                }
+                showUsers()
+            }
+        }
+
+    }
+
+    private fun showUsers() {
+        for (i: Int in userList.indices){
+            Log.d("Users", userList[i].plus("\n"))
+        }
+
+        }
+
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
-        return firestoreInstance.collection("users")
+        return chatInstance.collection("users")
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
                         Log.e("XatEntresol", "Users listener error.", firebaseFirestoreException)
@@ -149,13 +172,42 @@ object XatUtil {
                             .document(otherUserId)
                             .set(mapOf("channelId" to newChannel.id))
 
-                    firestoreInstance.collection("users").document(otherUserId)
+                    chatInstance.collection("users").document(otherUserId)
                             .collection("engagedChatChannels")
                             .document(currentUserId)
                             .set(mapOf("channelId" to newChannel.id))
 
                     onComplete(newChannel.id)
                 }
+    }
+
+
+    fun deleteChatChannel(otherUserId: String,
+                          onComplete: (channelId: String) -> Unit){
+        currentUserDocRef.collection("engagedChatChannels")
+                .document(otherUserId).get().addOnSuccessListener {
+                    if (it.exists()){
+                        onComplete(it["channelId"] as String)
+                        return@addOnSuccessListener
+                    }
+                    val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
+
+                    val channelToDelete = chatChannelsCollectionRef.document()
+                    channelToDelete.delete()
+                    currentUserDocRef
+                            .collection("engagedChatChannels")
+                            .document(otherUserId)
+                            .delete()
+                    chatInstance.collection("users").document(otherUserId)
+                            .collection("engagedChatChannels")
+                            .document(currentUserId)
+                            .delete()
+
+                    onComplete(channelToDelete.id)
+
+
+                }
+
     }
     fun addChatMessagesListener(channelId: String, context: Context,
                                 onListen: (List<Item>) -> Unit): ListenerRegistration {

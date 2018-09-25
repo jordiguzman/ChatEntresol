@@ -15,7 +15,6 @@ import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import appkite.jordiguzman.com.xatentresol.adapter.SettingsAdapter
-import appkite.jordiguzman.com.xatentresol.java.ListUsersActivity
 import appkite.jordiguzman.com.xatentresol.model.ItemSettings
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import kotlinx.android.synthetic.main.custom_dialog.view.*
@@ -26,16 +25,12 @@ import org.jetbrains.anko.support.v4.startActivity
 class SettingsFragment : Fragment() {
 
 
-    private var listTitle = arrayOf(
-            "Delete user",
-            "Change password",
-            "My acount",
-            "Push notifications")
     private var listLogo = intArrayOf(
             R.drawable.ic_delete,
             R.drawable.ic_change,
             R.drawable.ic_vpn_key_black_24dp,
-            R.drawable.ic_notifications)
+            R.drawable.ic_notifications,
+            R.drawable.ic_person)
 
 
             @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -57,27 +52,31 @@ class SettingsFragment : Fragment() {
                     1 -> changePassword()
                     2 -> toMyAcount()
                     3 -> pushNotification()
-                    4 -> userList()
+                    4 -> showUsers()
+
                 }
             }
         }
         return view
     }
 
+    private fun showUsers() {
+
+        XatUtil.getAllUsers()
+
+    }
+
     private fun populateList(): ArrayList<ItemSettings>{
         val list = ArrayList<ItemSettings>()
 
-        for (i in listTitle.indices){
+        for (i in 0..4){
             val itemSettings = ItemSettings()
             itemSettings.setLogo(listLogo[i])
-            itemSettings.setTitles(listTitle[i])
+            itemSettings.setTitles(resources.getStringArray(R.array.list_settings)[i])
             list.add(itemSettings)
         }
 
         return list
-    }
-    private fun userList() {
-        startActivity<ListUsersActivity>()
     }
 
     private fun toMyAcount() {

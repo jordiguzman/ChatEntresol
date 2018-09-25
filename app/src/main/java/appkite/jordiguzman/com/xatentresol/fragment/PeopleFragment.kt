@@ -15,6 +15,7 @@ import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
+import com.xwray.groupie.OnItemLongClickListener
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
@@ -30,6 +31,9 @@ class PeopleFragment : Fragment() {
     private var shouldInitRecyclerView = true
     private lateinit var peopleSection: Section
 
+    companion object {
+        var personIdBanned: String? = null
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,6 +59,7 @@ class PeopleFragment : Fragment() {
                     peopleSection = Section(items)
                     add(peopleSection)
                     setOnItemClickListener(onItemClick)
+                    setOnItemLongClickListener(onItemLongClick)
 
                 }
             }
@@ -80,6 +85,16 @@ class PeopleFragment : Fragment() {
 
             )
         }
+    }
+
+    private val onItemLongClick = OnItemLongClickListener{ item, _ ->
+
+        if (item is PersonItem){
+
+        }
+
+        return@OnItemLongClickListener true
+
     }
 
         

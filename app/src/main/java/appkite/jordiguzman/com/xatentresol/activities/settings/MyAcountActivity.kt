@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
+import android.text.InputFilter
 import android.view.MenuItem
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
@@ -26,6 +27,7 @@ class MyAcountActivity : AppCompatActivity() {
     private lateinit var selectedImageBytes: ByteArray
     private var pictureJustChanged = false
     private var isEditable = false
+    private var maxLength = 25
     companion object {
         var fromMyAcount = false
     }
@@ -34,9 +36,9 @@ class MyAcountActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_acount)
 
-
-
         initView()
+        setupEdittextCount()
+
         imageView_profile_picture.setOnClickListener {
             val intent = Intent().apply {
                 type = "image/*"
@@ -71,10 +73,19 @@ class MyAcountActivity : AppCompatActivity() {
                         startActivity(intentFor<SignInActivity>().newTask().clearTask())
                     }
         }
-        if (btn_save.text == "Edit profile") {
+        if (btn_save.text == "Edit profile" || btn_save.text == "Editar perfil") {
             isEditable = true
             deactiveUserProfile()
         }
+
+
+
+
+    }
+
+    private fun setupEdittextCount() {
+        editText_bio.filters += InputFilter.LengthFilter(maxLength)
+        editText_name.filters += InputFilter.LengthFilter(maxLength)
 
     }
 
@@ -114,7 +125,6 @@ class MyAcountActivity : AppCompatActivity() {
 
             editText_name.setText(user.name)
             editText_bio.setText(user.bio)
-
             if (!pictureJustChanged && user.profilePicturePath != null) {
                 GlideApp.with(this)
                         .load(StorageUtil.pathToReference(user.profilePicturePath))
@@ -123,7 +133,7 @@ class MyAcountActivity : AppCompatActivity() {
 
             } else {
                 if (!pictureJustChanged)
-                    longSnackbar(constraint_layout_fragment_my_acount, "Es indispensable que añadas una foto a tu perfil")
+                    longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
                     //toast("Es indispensable que añadas una foto a tu perfil")
             }
         }

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_layout_fragment_my_acount"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/constraint_layout_fragment_my_acount"
     tools:context=".activities.settings.MyAcountActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -14,6 +13,7 @@
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="32dp"
+        android:background="@drawable/ic_account_circle_black_24dp"
         app:civ_border_color="@android:color/black"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,22 +23,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        android:background="@drawable/ic_account_circle_black_24dp"
         app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/editText_name"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/edit_text_rounded"
-        android:textColor="@color/primary_text"
-        android:hint="@string/my_name"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="25"
+        app:counterOverflowTextAppearance="@style/counterOverride"
+        app:counterTextAppearance="@style/TextInputEditText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -46,32 +42,78 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageView_profile_picture"
-        app:layout_constraintVertical_bias="0.025"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        app:layout_constraintVertical_bias="0.025">
 
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/editText_bio"
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/edit_text_rounded"
+            android:hint="@string/my_name"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textColor="@color/primary_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView_profile_picture"
+            app:layout_constraintVertical_bias="0.025"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_input_layout_bio"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/edit_text_rounded"
-        android:textColor="@color/primary_text"
-        android:hint="@string/my_bio"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
-        android:maxHeight="150dp"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="25"
+        app:counterOverflowTextAppearance="@style/counterOverride"
+        app:counterTextAppearance="@style/TextInputEditText"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editText_name"
-        app:layout_constraintVertical_bias="0.042"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        app:layout_constraintTop_toBottomOf="@id/text_input_layout"
+        app:layout_constraintVertical_bias="0.042">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_bio"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/edit_text_rounded"
+            android:hint="@string/my_bio"
+            android:maxHeight="150dp"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:textColor="@color/primary_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_input_layout"
+            app:layout_constraintVertical_bias="0.042"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+    </android.support.design.widget.TextInputLayout>
+
 
     <ToggleButton
         android:id="@+id/btn_save"
@@ -83,13 +125,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button_red"
-        android:textOn="@string/save"
-        android:textOff="@string/edit_profile"
-        android:textColor="@android:color/white"
-        android:paddingLeft="16dp"
-        android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:paddingStart="16dp"
+        android:textColor="@android:color/white"
+        android:textOff="@string/edit_profile"
+        android:textOn="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.971"
@@ -122,6 +164,8 @@
         app:layout_constraintVertical_bias="0.982"
         tools:ignore="RtlHardcoded"
         tools:targetApi="lollipop" />
+
+
 
 </android.support.constraint.ConstraintLayout>
 

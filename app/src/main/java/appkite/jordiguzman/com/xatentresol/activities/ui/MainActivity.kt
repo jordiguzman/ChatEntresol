@@ -41,6 +41,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        if (PeopleFragment.personIdBanned != null){
+            replaceFragment(PeopleFragment())
+            navigation.selectedItemId = R.id.navigation_people
+        }
 
 
         if (MyAcountActivity.fromMyAcount){
