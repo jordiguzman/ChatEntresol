@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
@@ -41,6 +42,10 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        if (LegalActivity.fromLegal){
+            replaceFragment(SettingsFragment())
+            navigation.selectedItemId = R.id.navigation_settings
+        }
         if (PeopleFragment.personIdBanned != null){
             replaceFragment(PeopleFragment())
             navigation.selectedItemId = R.id.navigation_people
@@ -131,6 +136,7 @@ class MainActivity : AppCompatActivity() {
         alertDialog.show()
 
         dialog.btn_yes.setOnClickListener {
+            alertDialog.dismiss()
             closeApp()
         }
         dialog.btn_no.setOnClickListener {

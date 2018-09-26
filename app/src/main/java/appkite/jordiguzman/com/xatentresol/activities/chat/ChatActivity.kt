@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
@@ -48,6 +49,7 @@ class ChatActivity : AppCompatActivity() {
     val firebaseMessage = FirebaseMessaging.getInstance()
     private val MY_PHOTO = "my_photo"
     private var outputFileUri: Uri? = null
+    private var mCurrentPhotoPath: String? = null
 
 
 
@@ -97,13 +99,15 @@ class ChatActivity : AppCompatActivity() {
                 .format(Date())
         val imageFileName = MY_PHOTO + timeStamp + "_"
         // Determine Uri of camera image to save.
-        val mSeparator = separator.plus("MyDir").plus(separator)
+        val mSeparator = separator.plus("my_image").plus(separator)
         val root = File(Environment.DIRECTORY_PICTURES + mSeparator)
         root.mkdirs()
-        val fname = imageFileName
-        val sdImageMainDirectory = File(root, fname)
+        val sdImageMainDirectory = File(root, imageFileName)
         outputFileUri = Uri.fromFile(sdImageMainDirectory)
 
+
+
+        //TODO revisar todo el proceso
         // Camera.
         val cameraIntents = ArrayList<Intent>()
         val captureIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
@@ -158,13 +162,14 @@ class ChatActivity : AppCompatActivity() {
 
             }
 
-        }else if (requestCode != RC_IMAGE_GALLERY && resultCode == Activity.RESULT_OK &&
-                data != null && data.data != null){
-            //TODO captura de la imagen, metodos para ponerla en vertical y guardar en storage
+        }else {
+            Log.d("Camera", "yes")
+            //TODO revisar todo el proceso
+
+
+
         }
     }
-
-
 
 
 

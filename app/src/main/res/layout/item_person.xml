@@ -9,7 +9,7 @@
     android:layout_margin="4dp"
     style="@style/CardView"
     android:foreground="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/primary_light"
+    app:cardBackgroundColor="@android:color/white"
     android:clickable="true"
     android:focusable="true"
     app:cardCornerRadius="4dp"

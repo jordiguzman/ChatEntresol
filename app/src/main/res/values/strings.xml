@@ -40,12 +40,14 @@
     <string name="logo_settings_alt">Logo Configuración</string>
     <string name="notificaciones_push">Notificaciones push</string>
     <string name="all_users">Ver todos los usuarios (Debug)</string>
+    <string name="legal_info">Información legal</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
         <item>@string/reset_password</item>
         <item>@string/my_account</item>
         <item>@string/notificaciones_push</item>
+        <item>@string/legal_info</item>
         <item>@string/all_users</item>
     </string-array>
 

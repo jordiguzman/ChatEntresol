@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/constraint_layout_imageview"
-    tools:context="appkite.jordiguzman.com.xatentresol.activities.ui.ImageViewActivity">
+    tools:context="appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/photo_view"
+    <WebView
+        android:id="@+id/web_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

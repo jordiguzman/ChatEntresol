@@ -29,11 +29,13 @@ object StorageUtil {
     fun uploadMessageImage(imageBytes: ByteArray,
                            onSuccess: (imagePath: String) -> Unit) {
         val ref = currentUserRef.child("messages/${UUID.nameUUIDFromBytes(imageBytes)}")
+
         ref.putBytes(imageBytes)
                 .addOnSuccessListener {
                     onSuccess(ref.path)
                 }
     }
+
 
     fun pathToReference(path: String) = storageInstance.getReference(path)
 

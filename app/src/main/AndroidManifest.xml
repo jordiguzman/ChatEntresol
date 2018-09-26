@@ -78,22 +78,31 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activities.settings.MyAcountActivity"
+        <activity
+            android:name=".activities.settings.MyAcountActivity"
             android:theme="@style/AppThemeAppBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ui.MainActivity" />
         </activity>
+        <activity android:name=".activities.settings.NotificationsSettingsActivity" />
 
-        <activity android:name=".activities.settings.NotificationsSettingsActivity"/>
         <provider
-            android:authorities="appkite.jordiguzman.com.xatentresol"
             android:name="android.support.v4.content.FileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+            android:authorities="appkite.jordiguzman.com.xatentresol"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".activities.legal.LegalActivity"
+            android:theme="@style/AppThemeAppBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ui.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

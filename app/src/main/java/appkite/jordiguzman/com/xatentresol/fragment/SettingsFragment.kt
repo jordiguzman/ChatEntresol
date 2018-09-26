@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
@@ -30,6 +31,7 @@ class SettingsFragment : Fragment() {
             R.drawable.ic_change,
             R.drawable.ic_vpn_key_black_24dp,
             R.drawable.ic_notifications,
+            R.drawable.ic_info,
             R.drawable.ic_person)
 
 
@@ -52,12 +54,17 @@ class SettingsFragment : Fragment() {
                     1 -> changePassword()
                     2 -> toMyAcount()
                     3 -> pushNotification()
-                    4 -> showUsers()
+                    4 -> toLegal()
+                    5 -> showUsers()
 
                 }
             }
         }
         return view
+    }
+
+    private fun toLegal() {
+        startActivity<LegalActivity>()
     }
 
     private fun showUsers() {
@@ -69,7 +76,7 @@ class SettingsFragment : Fragment() {
     private fun populateList(): ArrayList<ItemSettings>{
         val list = ArrayList<ItemSettings>()
 
-        for (i in 0..4){
+        for (i in 0..5){
             val itemSettings = ItemSettings()
             itemSettings.setLogo(listLogo[i])
             itemSettings.setTitles(resources.getStringArray(R.array.list_settings)[i])
