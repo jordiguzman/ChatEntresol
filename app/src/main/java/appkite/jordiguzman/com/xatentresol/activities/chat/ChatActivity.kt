@@ -1,19 +1,23 @@
 package appkite.jordiguzman.com.xatentresol.activities.chat
 
 import android.app.Activity
-import android.content.ComponentName
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.LayoutInflater
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
@@ -29,10 +33,9 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.dialog_camera_galley.view.*
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.File.separator
-import java.text.SimpleDateFormat
+import java.io.InputStream
 import java.util.*
 
 
@@ -49,7 +52,8 @@ class ChatActivity : AppCompatActivity() {
     val firebaseMessage = FirebaseMessaging.getInstance()
     private val MY_PHOTO = "my_photo"
     private var outputFileUri: Uri? = null
-    private var mCurrentPhotoPath: String? = null
+    private var mImageUri: Uri? = null
+
 
 
 
@@ -87,65 +91,62 @@ class ChatActivity : AppCompatActivity() {
 
             }
             fab_send_image.setOnClickListener {
-                openImageIntent()
+                alertDialog()
 
             }
         }
     }
 
-    private fun openImageIntent() {
+    private fun alertDialog(){
+        val dialog = LayoutInflater.from(this).inflate(R.layout.dialog_camera_galley, null)
+        val builder = AlertDialog.Builder(this)
+                .setView(dialog)
+        val alertDialog = builder.show()
+        alertDialog.show()
 
-        val timeStamp = SimpleDateFormat("dd-MM-yyyy_HHmmss", Locale.ROOT)
-                .format(Date())
-        val imageFileName = MY_PHOTO + timeStamp + "_"
-        // Determine Uri of camera image to save.
-        val mSeparator = separator.plus("my_image").plus(separator)
-        val root = File(Environment.DIRECTORY_PICTURES + mSeparator)
-        root.mkdirs()
-        val sdImageMainDirectory = File(root, imageFileName)
-        outputFileUri = Uri.fromFile(sdImageMainDirectory)
+        dialog.btn_camera.setOnClickListener {
+
+            cameraIntent()
+
+            alertDialog.dismiss()
 
 
-
-        //TODO revisar todo el proceso
-        // Camera.
-        val cameraIntents = ArrayList<Intent>()
-        val captureIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-        val packageManager = packageManager
-        val listCam = packageManager.queryIntentActivities(captureIntent, 0)
-        for (res in listCam) {
-            val packageName = res.activityInfo.packageName
-            val intent = Intent(captureIntent)
-            intent.component = ComponentName(packageName, res.activityInfo.name)
-            intent.`package` = packageName
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
-            cameraIntents.add(intent)
         }
+        dialog.btn_galeria.setOnClickListener {
 
-        // Filesystem.
-        val intent = Intent().apply {
-            type = "image/*"
-            action = Intent.ACTION_GET_CONTENT
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+
+
+            alertDialog.dismiss()
         }
-
-
-        // Chooser of filesystem options.
-        val chooserIntent = Intent.createChooser(intent, "Select Source")
-
-        // Add the camera options.
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray<Parcelable>())
-
-        startActivityForResult(chooserIntent, RC_IMAGE_GALLERY)
     }
 
+    private fun fromGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, RC_IMAGE_GALLERY)
+    }
 
+    private fun cameraIntent() {
+         val filename = "" + System.currentTimeMillis() + ".jpg"
+        val values = ContentValues()
+        values.put(MediaStore.MediaColumns.TITLE, filename)
+        values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+
+        mImageUri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        grantUriPermission(null, mImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val intent = Intent()
+        intent.action = MediaStore.ACTION_IMAGE_CAPTURE
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
+        startActivityForResult(intent, RC_IMAGE_CAMERA)
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_IMAGE_GALLERY && resultCode == Activity.RESULT_OK &&
                 data != null && data.data != null){
             val selectedImagePath = data.data
+
 
             val selectedImageBmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImagePath)
 
@@ -162,16 +163,21 @@ class ChatActivity : AppCompatActivity() {
 
             }
 
-        }else {
-            Log.d("Camera", "yes")
-            //TODO revisar todo el proceso
+        }else if (requestCode == RC_IMAGE_CAMERA && resultCode == Activity.RESULT_OK &&
+                data != null && data.data != null)  {
+            if (mImageUri == null) {
+                Log.d("Camera", "URI is null")
+                return
+            }
+            val uri : Uri = mImageUri!!
 
-
+            val ins : InputStream? = contentResolver?.openInputStream(uri)
+            val img : Bitmap? = BitmapFactory.decodeStream(ins)
+            ins?.close()
 
         }
+
     }
-
-
 
     private fun updateRecyclerView(messages: List<Item>) {
         fun init() {
@@ -193,6 +199,21 @@ class ChatActivity : AppCompatActivity() {
             updateItems()
 
         recycler_view_messages.scrollToPosition(recycler_view_messages.adapter.itemCount - 1)
+    }
+
+
+    private fun checkPermissionToApp(permision: String, requestPermition: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, permision) != PackageManager.PERMISSION_GRANTED){
+                val strings = Array(0){permision}
+                ActivityCompat.requestPermissions(this, strings,requestPermition )
+                return
+            }
+        }
+        when(requestPermition){
+            RC_IMAGE_GALLERY -> fromGallery()
+        }
+
     }
 }
 

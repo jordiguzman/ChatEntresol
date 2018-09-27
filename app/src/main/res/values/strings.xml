@@ -41,6 +41,10 @@
     <string name="notificaciones_push">Notificaciones push</string>
     <string name="all_users">Ver todos los usuarios (Debug)</string>
     <string name="legal_info">Información legal</string>
+    <string name="aprieta_la_imagen_para_volver_atr_s">Aprieta la imagen para volver atrás</string>
+    <string name="camara">Cámara</string>
+    <string name="galeria">Galería</string>
+    <string name="selecciona_una_foto">Selecciona una foto</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
