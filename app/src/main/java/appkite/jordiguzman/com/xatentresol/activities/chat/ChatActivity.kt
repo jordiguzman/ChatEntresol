@@ -1,16 +1,22 @@
 package appkite.jordiguzman.com.xatentresol.activities.chat
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.media.ExifInterface
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -35,12 +41,10 @@ import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.dialog_camera_galley.view.*
 import java.io.ByteArrayOutputStream
-import java.io.InputStream
+import java.io.IOException
 import java.util.*
 
 
-private const val RC_IMAGE_GALLERY = 2
-private const val RC_IMAGE_CAMERA = 1
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var currentChannelId: String
@@ -49,18 +53,22 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messagesListenerRegistration: ListenerRegistration
     private var shouldInitRecyclerView = true
     private lateinit var messagesSection: Section
-    val firebaseMessage = FirebaseMessaging.getInstance()
-    private val MY_PHOTO = "my_photo"
-    private var outputFileUri: Uri? = null
+    private val firebaseMessage = FirebaseMessaging.getInstance()
     private var mImageUri: Uri? = null
-
-
-
+    private  val RC_IMAGE_GALLERY = 2
+    private val RC_IMAGE_CAMERA = 1
+    private val RP_GALLERY = 22
+    private val RP_CAMERA = 11
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+
+        if (savedInstanceState != null){
+            mImageUri = savedInstanceState.getParcelable("uriImage")
+        }
 
         tv_user_main_activity.text = intent.getStringExtra(AppConstants.USER_NAME)
 
@@ -97,6 +105,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun alertDialog(){
         val dialog = LayoutInflater.from(this).inflate(R.layout.dialog_camera_galley, null)
         val builder = AlertDialog.Builder(this)
@@ -105,17 +114,11 @@ class ChatActivity : AppCompatActivity() {
         alertDialog.show()
 
         dialog.btn_camera.setOnClickListener {
-
             cameraIntent()
-
             alertDialog.dismiss()
-
-
         }
         dialog.btn_galeria.setOnClickListener {
-
-
-
+            checkPermissionToApp()
             alertDialog.dismiss()
         }
     }
@@ -134,7 +137,6 @@ class ChatActivity : AppCompatActivity() {
         values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
 
         mImageUri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        grantUriPermission(null, mImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         val intent = Intent()
         intent.action = MediaStore.ACTION_IMAGE_CAPTURE
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
@@ -148,8 +150,8 @@ class ChatActivity : AppCompatActivity() {
             val selectedImagePath = data.data
 
 
-            val selectedImageBmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImagePath)
-
+            //val selectedImageBmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImagePath)
+            val selectedImageBmp = handleSamplingAndRotationBitmap(this, selectedImagePath)
             val outputStream = ByteArrayOutputStream()
             selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             val selectedImageBytes = outputStream.toByteArray()
@@ -163,20 +165,24 @@ class ChatActivity : AppCompatActivity() {
 
             }
 
-        }else if (requestCode == RC_IMAGE_CAMERA && resultCode == Activity.RESULT_OK &&
-                data != null && data.data != null)  {
+        }else if (requestCode == RC_IMAGE_CAMERA && resultCode == Activity.RESULT_OK)  {
+
             if (mImageUri == null) {
                 Log.d("Camera", "URI is null")
                 return
             }
-            val uri : Uri = mImageUri!!
-
-            val ins : InputStream? = contentResolver?.openInputStream(uri)
-            val img : Bitmap? = BitmapFactory.decodeStream(ins)
-            ins?.close()
-
+            val img : Bitmap? = handleSamplingAndRotationBitmap(this, mImageUri!!)
+            val outputStream = ByteArrayOutputStream()
+            img!!.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+            val selectedImageBytes = outputStream.toByteArray()
+            StorageUtil.uploadMessageImage(selectedImageBytes) { imagePath ->
+                val messageToSend =
+                        ImageMessage(imagePath, Calendar.getInstance().time,
+                                FirebaseAuth.getInstance().currentUser!!.uid,
+                                otherUserId, currentUser.name)
+                XatUtil.sendMessage(messageToSend, currentChannelId)
+            }
         }
-
     }
 
     private fun updateRecyclerView(messages: List<Item>) {
@@ -202,16 +208,148 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    private fun checkPermissionToApp(permision: String, requestPermition: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, permision) != PackageManager.PERMISSION_GRANTED){
-                val strings = Array(0){permision}
-                ActivityCompat.requestPermissions(this, strings,requestPermition )
-                return
+    private fun checkPermissionToApp( ) {
+
+        val permissionWrite = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val permissionRead = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        if (permissionWrite != PackageManager.PERMISSION_GRANTED && permissionRead != PackageManager.PERMISSION_GRANTED){
+            makeRequest()
+        }else{
+            fromGallery()
+        }
+
+    }
+
+    private fun makeRequest() {
+         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                 RP_GALLERY)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            RP_GALLERY -> {
+
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+
+
+                } else {
+                    fromGallery()
+                }
             }
         }
-        when(requestPermition){
-            RC_IMAGE_GALLERY -> fromGallery()
+    }
+
+    /**
+     * ROTATE IMAGE
+     *
+     */
+    @Throws(IOException::class)
+    private fun handleSamplingAndRotationBitmap(context: Context, selectedImage: Uri): Bitmap {
+        val MAX_HEIGHT = 1024
+        val MAX_WIDTH = 1024
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        var imageStream = context.contentResolver.openInputStream(selectedImage)
+        BitmapFactory.decodeStream(imageStream, null, options)
+        assert(imageStream != null)
+        imageStream!!.close()
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, MAX_WIDTH, MAX_HEIGHT)
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false
+        imageStream = context.contentResolver.openInputStream(selectedImage)
+        var img = BitmapFactory.decodeStream(imageStream, null, options)
+
+        img = rotateImageIfRequired(context, img, selectedImage)
+        return img
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options,
+                                      reqWidth: Int, reqHeight: Int): Int {
+        // Raw height and width of image
+        val height = options.outHeight
+        val width = options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
+            val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee a final image
+            // with both dimensions larger than or equal to the requested height and width.
+            inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
+
+            // This offers some additional logic in case the image has a strange
+            // aspect ratio. For example, a panorama may have a much larger
+            // width than height. In these cases the total pixels might still
+            // end up being too large to fit comfortably in memory, so we should
+            // be more aggressive with sample down the image (=larger inSampleSize).
+
+            val totalPixels = (width * height).toFloat()
+
+            // Anything more than 2x the requested pixels we'll sample down further
+            val totalReqPixelsCap = (reqWidth * reqHeight * 2).toFloat()
+
+            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+                inSampleSize++
+            }
+        }
+        return inSampleSize
+    }
+
+    @Throws(IOException::class)
+    private fun rotateImageIfRequired(context: Context, img: Bitmap, selectedImage: Uri): Bitmap {
+
+        val input = context.contentResolver.openInputStream(selectedImage)
+        val ei: ExifInterface
+        ei = if (Build.VERSION.SDK_INT > 23)
+            ExifInterface(input)
+        else
+            ExifInterface(selectedImage.path)
+
+        val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        return when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(img, 90)
+            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(img, 180)
+            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(img, 270)
+            else -> img
+        }
+    }
+
+    private fun rotateImage(img: Bitmap, degree: Int): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degree.toFloat())
+        val rotatedImg = Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
+        img.recycle()
+        return rotatedImg
+    }
+
+    /**
+     * **********************************************************************
+     */
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
+
+        val uriImage = mImageUri
+        outState?.putParcelable("uriImage", uriImage)
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if (savedInstanceState != null){
+            mImageUri = savedInstanceState.getParcelable("uriImage")
         }
 
     }

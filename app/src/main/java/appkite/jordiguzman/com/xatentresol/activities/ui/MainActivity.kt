@@ -2,6 +2,9 @@ package appkite.jordiguzman.com.xatentresol.activities.ui
 
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.support.design.internal.BottomNavigationItemView
@@ -38,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         replaceFragment(PeopleFragment())
 
         setSupportActionBar(toolbar_main)
-
-
-
+        if (!isNetworkAvailable()){
+            longSnackbar(constraint_layout_main, getString(R.string.no_network)).show()
+        }
 
         if (LegalActivity.fromLegal){
             replaceFragment(SettingsFragment())
@@ -87,6 +90,13 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+     private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE)
+        return if (connectivityManager is ConnectivityManager) {
+            val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
+            networkInfo?.isConnected ?: false
+        } else false
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

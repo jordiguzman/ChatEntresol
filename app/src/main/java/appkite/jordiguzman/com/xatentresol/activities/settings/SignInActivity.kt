@@ -99,7 +99,7 @@ class SignInActivity : AppCompatActivity() {
                 if (response == null) return
                 when (response.error?.errorCode) {
                     ErrorCodes.NO_NETWORK ->
-                        longSnackbar(constraint_layout, "No network")
+                        longSnackbar(constraint_layout, getString(R.string.no_network))
                     ErrorCodes.UNKNOWN_ERROR ->
                         longSnackbar(constraint_layout, "Unknown error")
                 }

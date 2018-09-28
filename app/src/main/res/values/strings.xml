@@ -45,6 +45,9 @@
     <string name="camara">Cámara</string>
     <string name="galeria">Galería</string>
     <string name="selecciona_una_foto">Selecciona una foto</string>
+    <string name="camera_logo">Camera Logo</string>
+    <string name="gallery_logo">Gallery Logo</string>
+    <string name="no_network">No network</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
