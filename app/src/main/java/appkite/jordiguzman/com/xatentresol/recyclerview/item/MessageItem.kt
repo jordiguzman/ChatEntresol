@@ -18,6 +18,7 @@ abstract class MessageItem(private val message: Message)
     override fun bind(viewHolder: ViewHolder, position: Int) {
         setTimeText(viewHolder)
         setMessageRootGravity(viewHolder)
+
     }
 
     private fun setTimeText(viewHolder: ViewHolder) {
@@ -41,4 +42,8 @@ abstract class MessageItem(private val message: Message)
             }
         }
     }
+
+
+
+
 }

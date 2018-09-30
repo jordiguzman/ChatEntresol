@@ -15,6 +15,7 @@ import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordAct
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.users.UsersBannedActivity
 import appkite.jordiguzman.com.xatentresol.adapter.SettingsAdapter
 import appkite.jordiguzman.com.xatentresol.model.ItemSettings
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
@@ -69,7 +70,7 @@ class SettingsFragment : Fragment() {
 
     private fun showUsers() {
 
-        XatUtil.getAllUsers()
+        startActivity<UsersBannedActivity>()
 
     }
 

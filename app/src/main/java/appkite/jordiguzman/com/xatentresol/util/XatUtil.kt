@@ -2,6 +2,8 @@ package appkite.jordiguzman.com.xatentresol.util
 
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
 import appkite.jordiguzman.com.xatentresol.model.*
@@ -15,7 +17,11 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 
-object XatUtil {
+
+object XatUtil   {
+
+
+
 
     private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
@@ -24,9 +30,11 @@ object XatUtil {
                 ?: throw NullPointerException("UID is null.")}")
 
     private var mAuth: FirebaseAuth? = null
-    private var userList = mutableListOf<String>()
+    var userList = mutableListOf<String>()
 
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
+
+
 
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
@@ -110,6 +118,9 @@ object XatUtil {
 
     }
     fun getAllUsers(){
+        if (!userList.isEmpty()){
+            userList.clear()
+        }
         val pathUser = "users"
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection(pathUser)
@@ -117,6 +128,7 @@ object XatUtil {
             if (task.isSuccessful){
                 for (document in task.result){
                     userList.add(document.id)
+
 
                 }
                 showUsers()
@@ -130,7 +142,9 @@ object XatUtil {
             Log.d("Users", userList[i].plus("\n"))
         }
 
+
         }
+
 
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
         return chatInstance.collection("users")
@@ -182,33 +196,7 @@ object XatUtil {
     }
 
 
-    fun deleteChatChannel(otherUserId: String,
-                          onComplete: (channelId: String) -> Unit){
-        currentUserDocRef.collection("engagedChatChannels")
-                .document(otherUserId).get().addOnSuccessListener {
-                    if (it.exists()){
-                        onComplete(it["channelId"] as String)
-                        return@addOnSuccessListener
-                    }
-                    val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
 
-                    val channelToDelete = chatChannelsCollectionRef.document()
-                    channelToDelete.delete()
-                    currentUserDocRef
-                            .collection("engagedChatChannels")
-                            .document(otherUserId)
-                            .delete()
-                    chatInstance.collection("users").document(otherUserId)
-                            .collection("engagedChatChannels")
-                            .document(currentUserId)
-                            .delete()
-
-                    onComplete(channelToDelete.id)
-
-
-                }
-
-    }
     fun addChatMessagesListener(channelId: String, context: Context,
                                 onListen: (List<Item>) -> Unit): ListenerRegistration {
         return chatChannelsCollectionRef.document(channelId).collection("messages")
@@ -255,6 +243,13 @@ object XatUtil {
     //endRegion FCM
 
 
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
+        return if (connectivityManager is ConnectivityManager) {
+            val networkInfo: NetworkInfo? = connectivityManager.activeNetworkInfo
+            networkInfo?.isConnected ?: false
+        } else false
+    }
 }
 
 

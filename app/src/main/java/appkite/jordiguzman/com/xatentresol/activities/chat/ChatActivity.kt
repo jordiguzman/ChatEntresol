@@ -40,6 +40,7 @@ import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.dialog_camera_galley.view.*
+import org.jetbrains.anko.design.longSnackbar
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
@@ -65,6 +66,10 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        if (!XatUtil.isNetworkAvailable(this)){
+            longSnackbar(constraint_chat, getString(R.string.no_network)).show()
+            return
+        }
 
         if (savedInstanceState != null){
             mImageUri = savedInstanceState.getParcelable("uriImage")
@@ -353,6 +358,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
     }
+
 }
 
 
