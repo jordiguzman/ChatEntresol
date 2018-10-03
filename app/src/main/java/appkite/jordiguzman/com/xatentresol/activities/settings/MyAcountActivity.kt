@@ -132,7 +132,7 @@ class MyAcountActivity : AppCompatActivity() {
                         .into(imageView_profile_picture)
 
             } else {
-                if (!pictureJustChanged)
+                if (!pictureJustChanged || user.profilePicturePath == null)
                     longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
                     //toast("Es indispensable que añadas una foto a tu perfil")
             }

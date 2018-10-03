@@ -20,9 +20,6 @@ import com.xwray.groupie.kotlinandroidextensions.Item
 
 object XatUtil   {
 
-
-
-
     private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     private val currentUserDocRef: DocumentReference
@@ -30,11 +27,8 @@ object XatUtil   {
                 ?: throw NullPointerException("UID is null.")}")
 
     private var mAuth: FirebaseAuth? = null
-    var userList = mutableListOf<String>()
-
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
-
-
+    private val chatChannelsGroupCollectionRef = chatInstance.collection("chatChannelsGroup")
 
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
@@ -114,37 +108,7 @@ object XatUtil   {
              Log.d("Error", e.message)
 
          }
-
-
     }
-    fun getAllUsers(){
-        if (!userList.isEmpty()){
-            userList.clear()
-        }
-        val pathUser = "users"
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection(pathUser)
-        userRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful){
-                for (document in task.result){
-                    userList.add(document.id)
-
-
-                }
-                showUsers()
-            }
-        }
-
-    }
-
-    private fun showUsers() {
-        for (i: Int in userList.indices){
-            Log.d("Users", userList[i].plus("\n"))
-        }
-
-
-        }
-
 
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
         return chatInstance.collection("users")
@@ -195,6 +159,35 @@ object XatUtil   {
                 }
     }
 
+    fun getOrCreateChatChannelGroup(otherUserId: String,
+                                    onComplete: (channelId: String) -> Unit){
+        currentUserDocRef.collection("groupChatChannels")
+                .document(otherUserId).get().addOnSuccessListener {
+                    if (it.exists()) {
+                        onComplete(it["channelId"] as String)
+                        return@addOnSuccessListener
+                    }
+                    val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
+
+                    val newChannel = chatChannelsGroupCollectionRef.document()
+                    newChannel.set(ChatChannel(mutableListOf(currentUserId, otherUserId)))
+
+                    currentUserDocRef
+                            .collection("groupChatChannels")
+                            .document(otherUserId)
+                            .set(mapOf("channelId" to newChannel.id))
+
+                    chatInstance.collection("users").document(otherUserId)
+                            .collection("groupChatChannels")
+                            .document(currentUserId)
+                            .set(mapOf("channelId" to newChannel.id))
+
+                    onComplete(newChannel.id)
+                }
+
+    }
+
+
 
 
     fun addChatMessagesListener(channelId: String, context: Context,
@@ -218,6 +211,8 @@ object XatUtil   {
                     onListen(items)
                 }
     }
+
+    //TODO hacer funcion nueva para groupmessages
     fun sendMessage(message: Message, channelId: String){
         chatChannelsCollectionRef.document(channelId)
                 .collection("messages")

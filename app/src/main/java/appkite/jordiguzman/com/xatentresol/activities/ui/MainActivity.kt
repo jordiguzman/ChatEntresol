@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.chat.GroupChatActivity
 import appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         replaceFragment(PeopleFragment())
+        navigation.selectedItemId = R.id.navigation_people
 
         setSupportActionBar(toolbar_main)
         if (!XatUtil.isNetworkAvailable(this)){
@@ -79,6 +81,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_exit ->{
                     alertDialog()
 
+                    true
+                }
+                R.id.navigation_group ->{
+                    startActivity<GroupChatActivity>()
                     true
                 }
 

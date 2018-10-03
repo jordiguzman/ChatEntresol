@@ -15,6 +15,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="cardViewStyle">@style/Base.CardView</item>
     </style>
     <style name="AppTheme.ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">
         <!--<item name="actionOverflowButtonStyle">@style/AppTheme.OverflowButtonStyle</item>-->
@@ -22,6 +23,7 @@
         <item name="titleTextAppearance">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
         <item name="android:titleTextAppearance" tools:targetApi="lollipop">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
         <item name="subtitleTextAppearance">@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle</item>
+        <item name="cardViewStyle">@style/Base.CardView</item>
     </style>
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">@color/colorPrimary</item>
@@ -30,7 +32,7 @@
     </style>
 
     <style name="SplashTeme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/splah_screen_background</item>
+
 
     </style>
 

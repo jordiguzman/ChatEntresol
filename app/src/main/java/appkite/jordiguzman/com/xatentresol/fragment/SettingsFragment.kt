@@ -72,6 +72,7 @@ class SettingsFragment : Fragment() {
 
         startActivity<UsersBannedActivity>()
 
+
     }
 
     private fun populateList(): ArrayList<ItemSettings>{
