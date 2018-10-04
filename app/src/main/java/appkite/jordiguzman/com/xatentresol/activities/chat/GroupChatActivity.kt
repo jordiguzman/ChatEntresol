@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
+import appkite.jordiguzman.com.xatentresol.util.AppConstants
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
@@ -37,13 +38,14 @@ class GroupChatActivity : AppCompatActivity() {
             currentUser = it
         }
 
-        otherUserId = "EhSAF1HIsdTBHr4chS9S"
+        otherUserId = AppConstants.GROUP_CHAT
 
         XatUtil.getOrCreateChatChannelGroup(otherUserId) { channelId ->
             currentChannelId = channelId
 
+
             messagesListenerRegistration =
-                    XatUtil.addChatMessagesListener(channelId, this, this::updateRecyclerView)
+                    XatUtil.addChatMessagesGroupListener(channelId, this, this::updateRecyclerView)
 
             imageView_send_group.setOnClickListener {
                 if (editText_message_group.text.isEmpty())return@setOnClickListener
@@ -54,7 +56,7 @@ class GroupChatActivity : AppCompatActivity() {
                                 FirebaseAuth.getInstance().currentUser!!.uid,
                                 otherUserId, currentUser.name)
                 editText_message_group.setText("")
-                XatUtil.sendMessage(messageToSend, channelId)
+                XatUtil.sendMessageGroup(messageToSend, channelId)
 
             }
             fab_send_image_group.setOnClickListener {

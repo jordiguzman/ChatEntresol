@@ -27,9 +27,8 @@ class UsersBannedActivity : AppCompatActivity() {
         getCurrentUserName()
         getAllUsers()
 
-        btn_send.setOnClickListener {
-            sendMessage()
-        }
+
+
 
     }
 
@@ -39,7 +38,7 @@ class UsersBannedActivity : AppCompatActivity() {
             try {
                 val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
                 sender.sendMail("EmailSender App",
-                        "Prueba cuerpo de correo",
+                        "Cuerpo Correo",
                         "jordiguz@gmail.com",
                         "jordiguz@gmail.com")
                 progressDialog.dismiss()

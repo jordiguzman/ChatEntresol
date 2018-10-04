@@ -49,6 +49,11 @@
     <string name="gallery_logo">Gallery Logo</string>
     <string name="no_network">No network</string>
     <string name="grupo">Grupo</string>
+    <string name="report_user">Vas a reportar al usuario que has seleccionado. ¿Podrías indicar la o las razones?</string>
+    <string name="report_user_message">Reportar usuario</string>
+    <string name="reportar">Reportar</string>
+    <string name="salir">Salir</string>
+    <string name="introduce_el_texto_aqu">Introduce el texto aquí</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>

@@ -44,6 +44,10 @@ object XatUtil   {
         }
     }
 
+
+    /**
+     * *************   Email ********************
+     */
     fun sendEmailVerification(context: Context){
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
@@ -66,6 +70,10 @@ object XatUtil   {
         }
         return  true
     }
+
+    /**
+     * *****************   USERS *****************
+     */
 
 
     fun deleteCurrentUser(){
@@ -110,6 +118,10 @@ object XatUtil   {
          }
     }
 
+    /**
+     * ******************* LISTENER **********************************
+     */
+
     fun addUsersListener(context: Context, onListen: (List<Item>) -> Unit): ListenerRegistration {
         return chatInstance.collection("users")
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -129,6 +141,54 @@ object XatUtil   {
 
     fun removeListener(registration: ListenerRegistration) = registration.remove()
 
+
+    fun addChatMessagesListener(channelId: String, context: Context,
+                                onListen: (List<Item>) -> Unit): ListenerRegistration {
+        return chatChannelsCollectionRef.document(channelId).collection("messages")
+                .orderBy("time")
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    if (firebaseFirestoreException != null) {
+                        Log.e("XatEntresol", "ChatMessagesListener error.", firebaseFirestoreException)
+                        return@addSnapshotListener
+                    }
+
+                    val items = mutableListOf<Item>()
+                    querySnapshot!!.documents.forEach {
+                        if (it["type"] == MessageType.TEXT)
+                            items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!, context))
+                        else
+                            items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!, context))
+                        return@forEach
+                    }
+                    onListen(items)
+                }
+    }
+    fun addChatMessagesGroupListener(channelId: String, context: Context,
+                                     onListen: (List<Item>) -> Unit): ListenerRegistration{
+        return chatChannelsGroupCollectionRef.document(channelId).collection("groupMessages")
+                .orderBy("time")
+                .addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+                    if (firebaseFirestoreException != null) {
+                        Log.e("XatEntresol", "ChatMessagesListener error.", firebaseFirestoreException)
+                        return@addSnapshotListener
+                    }
+                    val items = mutableListOf<Item>()
+                    querySnapshot!!.documents.forEach{
+                        if (it["type"] == MessageType.TEXT)
+                            items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!, context))
+                        else
+                            items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!, context))
+                        return@forEach
+                    }
+                    onListen(items)
+
+                }
+    }
+
+
+    /**
+     * ********************* CHANNELS *******************
+     */
 
 
     fun getOrCreateChatChannel(otherUserId: String,
@@ -187,37 +247,20 @@ object XatUtil   {
 
     }
 
+    /**
+     * *********** SEND ************************
+     */
 
-
-
-    fun addChatMessagesListener(channelId: String, context: Context,
-                                onListen: (List<Item>) -> Unit): ListenerRegistration {
-        return chatChannelsCollectionRef.document(channelId).collection("messages")
-                .orderBy("time")
-                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    if (firebaseFirestoreException != null) {
-                        Log.e("XatEntresol", "ChatMessagesListener error.", firebaseFirestoreException)
-                        return@addSnapshotListener
-                    }
-
-                    val items = mutableListOf<Item>()
-                    querySnapshot!!.documents.forEach {
-                        if (it["type"] == MessageType.TEXT)
-                            items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!, context))
-                        else
-                            items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!, context))
-                        return@forEach
-                    }
-                    onListen(items)
-                }
-    }
-
-    //TODO hacer funcion nueva para groupmessages
     fun sendMessage(message: Message, channelId: String){
         chatChannelsCollectionRef.document(channelId)
                 .collection("messages")
                 .add(message)
 
+    }
+    fun sendMessageGroup(message: Message, channelId: String){
+        chatChannelsGroupCollectionRef.document(channelId)
+                .collection("groupMessages")
+                .add(message)
     }
 
 

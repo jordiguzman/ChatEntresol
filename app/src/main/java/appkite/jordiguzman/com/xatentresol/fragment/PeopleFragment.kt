@@ -15,7 +15,6 @@ import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
-import com.xwray.groupie.OnItemLongClickListener
 import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
@@ -59,7 +58,7 @@ class PeopleFragment : Fragment() {
                     peopleSection = Section(items)
                     add(peopleSection)
                     setOnItemClickListener(onItemClick)
-                    setOnItemLongClickListener(onItemLongClick)
+
 
                 }
             }
@@ -79,6 +78,7 @@ class PeopleFragment : Fragment() {
             startActivity<ChatActivity>(
                     AppConstants.USER_NAME to item.person.name,
                     AppConstants.USER_ID to item.userId,
+                    //TODO Comprobar la profilephoto antes de clickar
                     AppConstants.USER_PATH_PHOTO to item.person.profilePicturePath!!
 
 
@@ -87,15 +87,7 @@ class PeopleFragment : Fragment() {
         }
     }
 
-    private val onItemLongClick = OnItemLongClickListener{ item, _ ->
 
-        if (item is PersonItem){
-
-        }
-
-        return@OnItemLongClickListener true
-
-    }
 
         
        
