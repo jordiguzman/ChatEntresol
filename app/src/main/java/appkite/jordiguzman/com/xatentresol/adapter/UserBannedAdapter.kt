@@ -1,5 +1,6 @@
 package appkite.jordiguzman.com.xatentresol.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -11,16 +12,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
+import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.custom_dialog.view.*
+import kotlinx.android.synthetic.main.custom_dialog_banned_users.view.*
+import org.jetbrains.anko.indeterminateProgressDialog
 
 class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Context) :
         RecyclerView.Adapter<UserBannedAdapter.AdapterUserBannedViewHolder>(){
 
     private var cardViewClicked = false
+    private var reportEmailBody = ""
+    private  var comment = ""
+    private var emailUserBanned = ""
+    private val messageToBannedUser = context.getString(R.string.message_to_banned_user)
+    private var isBannedUser = false
+
 
     override fun onBindViewHolder(holder: AdapterUserBannedViewHolder, position: Int) {
          holder.tvBannedUsers.text = userBanned[position].name
@@ -34,15 +44,29 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
             if (cardViewClicked){
                 holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
                 cardViewClicked = false
-
                 return@setOnClickListener
             }
-            Log.d("User", userBanned[position].name)
-            alertDialog(holder)
+            updateBannedUser(position)
+            alertDialog(holder, position)
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.secondary_text))
 
             cardViewClicked = true
         }
+    }
+
+    private fun updateBannedUser(position: Int) {
+        reportEmailBody = userBanned[position].name
+        val bio = userBanned[position].bio
+        val profilePicturePath = userBanned[position].profilePicturePath
+        emailUserBanned = userBanned[position].emailUser
+        userBanned[position].isBanned = true
+        isBannedUser = userBanned[position].isBanned
+        XatUtil.updateCurrentUser(reportEmailBody, bio, profilePicturePath, true)
+        saveIsBanned()
+    }
+
+    private fun saveIsBanned() {
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterUserBannedViewHolder {
@@ -53,7 +77,8 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
     override fun getItemCount(): Int {
        return userBanned.size
     }
-    private fun alertDialog(holder: AdapterUserBannedViewHolder){
+    @SuppressLint("InflateParams")
+    private fun alertDialog(holder: AdapterUserBannedViewHolder, position: Int){
         val dialog = LayoutInflater.from(context).inflate(R.layout.custom_dialog_banned_users, null)
         val builder = AlertDialog.Builder(context)
                 .setView(dialog)
@@ -61,18 +86,62 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         val alertDialog = builder.show()
         alertDialog.show()
 
-        dialog.btn_yes.setOnClickListener {
+
+        dialog.btn_report.setOnClickListener {
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
+            cardViewClicked = false
+            comment = dialog.et_user_report.text.toString()
+            sendMessageToAdmin()
+            sendMessageToUserBanned()
+            updateBannedUser(position)
             alertDialog.dismiss()
 
 
         }
-        dialog.btn_no.setOnClickListener {
+        dialog.btn_close.setOnClickListener {
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
+            cardViewClicked = false
             alertDialog.dismiss()
 
         }
     }
+    private fun sendMessageToUserBanned() {
+        //val progressDialog = context.indeterminateProgressDialog("Sending Email. Please wait.")
+        val sender = Thread(Runnable {
+            try {
+                val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
+                sender.sendMail("XatEntresól",
+                        messageToBannedUser,
+                        "xatentresol.report@gmail.com",
+                        emailUserBanned)
+                //progressDialog.dismiss()
+            } catch (e: Exception) {
+                Log.e("mylog", "Error: " + e.message)
+            }
+        })
+        sender.start()
+    }
+
+    private fun sendMessageToAdmin() {
+        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
+        val sender = Thread(Runnable {
+            try {
+                val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
+                sender.sendMail("XatEntresól",
+                        reportEmailBody.plus("\n")
+                                .plus(comment)
+                                .plus("\n")
+                                .plus(emailUserBanned),
+                        "xatentresol.report@gmail.com",
+                        "xatentresol.report@gmail.com")
+                progressDialog.dismiss()
+            } catch (e: Exception) {
+                Log.e("mylog", "Error: " + e.message)
+            }
+        })
+        sender.start()
+    }
+
 
 
 

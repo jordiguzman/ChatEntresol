@@ -21,7 +21,7 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import java.io.ByteArrayOutputStream
 
-class MyAcountActivity : AppCompatActivity() {
+class MyAccountActivity : AppCompatActivity() {
 
     private val RC_SELECT_IMAGE = 2
     private lateinit var selectedImageBytes: ByteArray
@@ -70,6 +70,7 @@ class MyAcountActivity : AppCompatActivity() {
             AuthUI.getInstance()
                     .signOut(this)
                     .addOnCompleteListener {
+                        SignInActivity.firstTime = true
                         startActivity(intentFor<SignInActivity>().newTask().clearTask())
                     }
         }
@@ -134,7 +135,7 @@ class MyAcountActivity : AppCompatActivity() {
             } else {
                 if (!pictureJustChanged || user.profilePicturePath == null)
                     longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
-                    //toast("Es indispensable que añadas una foto a tu perfil")
+
             }
         }
     }
@@ -142,12 +143,23 @@ class MyAcountActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
             android.R.id.home ->{
-                fromMyAcount = true
-                NavUtils.navigateUpFromSameTask(this)
-                return true
+                return if (!pictureJustChanged){
+                    longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
+                    false
+                } else {
+                    fromMyAcount = true
+                    NavUtils.navigateUpFromSameTask(this)
+                    true
+                }
+
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
+
     }
 
 }

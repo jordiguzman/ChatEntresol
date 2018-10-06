@@ -16,8 +16,7 @@ import android.view.MenuItem
 import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.chat.GroupChatActivity
-import appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity
-import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
 import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
@@ -45,17 +44,14 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (LegalActivity.fromLegal){
-            replaceFragment(SettingsFragment())
-            navigation.selectedItemId = R.id.navigation_settings
-        }
+
         if (PeopleFragment.personIdBanned != null){
             replaceFragment(PeopleFragment())
             navigation.selectedItemId = R.id.navigation_people
         }
 
 
-        if (MyAcountActivity.fromMyAcount){
+        if (MyAccountActivity.fromMyAcount){
             replaceFragment(SettingsFragment())
             navigation.selectedItemId = R.id.navigation_settings
         }
@@ -63,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         navigation.itemBackgroundResource = R.color.colorPrimaryDark
         //addBadge(0)
 
-        chechFirstTimeUser()
+        checkFirstTimeUser()
 
         navigation.setOnNavigationItemSelectedListener {
 
@@ -104,14 +100,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId!!){
-            R.id.action_subscribe -> suscribeTopic()
+            R.id.action_subscribe -> subscribeTopic()
 
         }
         return super.onOptionsItemSelected(item)
 
     }
 
-    private fun suscribeTopic() {
+    private fun subscribeTopic() {
         longSnackbar(constraint_layout_main, "Te has suscrito a las noticias de L'Entresòl")
          FirebaseMessaging.getInstance().subscribeToTopic("globalMessages")
     }
@@ -153,11 +149,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun chechFirstTimeUser() {
-        if (!XatUtil.verifiedUserEmail(this)){
-            longSnackbar(constraint_layout_main, getString(R.string.verifica_correo))
-            SignInActivity.firstTime = true
+    private fun checkFirstTimeUser() {
+        if (!XatUtil.verifiedUserEmail()){
+            SignInActivity.firstTime = false
             startActivity<SignInActivity>()
+        } else{
+            XatUtil.getCurrentUser { User ->
+                if (User.profilePicturePath == null){
+                    startActivity<MyAccountActivity>()
+                }
+            }
         }
 
     }

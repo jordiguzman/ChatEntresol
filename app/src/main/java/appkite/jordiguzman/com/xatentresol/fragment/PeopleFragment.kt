@@ -78,7 +78,6 @@ class PeopleFragment : Fragment() {
             startActivity<ChatActivity>(
                     AppConstants.USER_NAME to item.person.name,
                     AppConstants.USER_ID to item.userId,
-                    //TODO Comprobar la profilephoto antes de clickar
                     AppConstants.USER_PATH_PHOTO to item.person.profilePicturePath!!
 
 

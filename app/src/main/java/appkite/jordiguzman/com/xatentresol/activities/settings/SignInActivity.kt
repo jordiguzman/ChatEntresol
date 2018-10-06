@@ -1,5 +1,6 @@
 package appkite.jordiguzman.com.xatentresol.activities.settings
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -22,12 +23,13 @@ import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 
+@Suppress("DEPRECATION")
 class SignInActivity : AppCompatActivity() {
 
-    private val RC_SIGN_IN = 1
-    var visible: Boolean? = false
+    private val rcSigning = 1
+    private var visible: Boolean? = false
     companion object {
-        var firstTime: Boolean? = false
+        var firstTime: Boolean? = true
     }
     private val signInProviders =
             listOf(AuthUI.IdpConfig.EmailBuilder()
@@ -39,16 +41,16 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
+        //TODO Revisar que no salga el aviso de consultar el correo la primera vez y revisar los dos campor Banned y banned creados.
         readShared()
-        if (!visible!! && firstTime!!){
-            alertDialog()
-        }
+        if (!visible!! )alertDialog()
+        if (!firstTime!!)longSnackbar(constraint_layout_signin, R.string.verifica_correo)
         account_sign_in.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                     .setAvailableProviders(signInProviders)
                     .setLogo(R.drawable.ic_logo)
                     .build()
-            startActivityForResult(intent, RC_SIGN_IN)
+            startActivityForResult(intent, rcSigning)
         }
     }
 
@@ -63,6 +65,7 @@ class SignInActivity : AppCompatActivity() {
         editor.apply()
     }
 
+    @SuppressLint("InflateParams")
     private fun alertDialog() {
         val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog_notice, null)
         val builder = android.support.v7.app.AlertDialog.Builder(this)
@@ -73,6 +76,7 @@ class SignInActivity : AppCompatActivity() {
             if (dialog.checkBox_notice.isChecked) {
                 visible = true
                 shared()
+                longSnackbar(constraint_layout_signin, R.string.verifica_correo)
             }
             alertDialog.dismiss()
         }
@@ -81,27 +85,29 @@ class SignInActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == rcSigning) {
             val response = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
                 val progressDialog = indeterminateProgressDialog("Setting up your account")
+
                 XatUtil.initCurrentUserIfFirstTime {
-                    if (!XatUtil.verifiedUserEmail(this)){
+
+                    if (!XatUtil.verifiedUserEmail()){
                         XatUtil.sendEmailVerification(this)
                     }
                     startActivity(intentFor<MainActivity>().newTask().clearTask())
-                    val registrtionToken = FirebaseInstanceId.getInstance().token
-                    MyFirebaseInstanceIDService.addTokenXat(registrtionToken)
+                    val registrationToken = FirebaseInstanceId.getInstance().token
+                    MyFirebaseInstanceIDService.addTokenXat(registrationToken)
                     progressDialog.dismiss()
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 if (response == null) return
                 when (response.error?.errorCode) {
                     ErrorCodes.NO_NETWORK ->
-                        longSnackbar(constraint_layout, getString(R.string.no_network))
+                        longSnackbar(constraint_layout_signin, getString(R.string.no_network))
                     ErrorCodes.UNKNOWN_ERROR ->
-                        longSnackbar(constraint_layout, "Unknown error")
+                        longSnackbar(constraint_layout_signin, "Unknown error")
                 }
             }
         }

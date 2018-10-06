@@ -67,8 +67,9 @@ class UsersBannedActivity : AppCompatActivity() {
                 for (document in task.result){
                     val name = document.getString("name")
                     val profilePicturePath = document.getString("profilePicturePath")
+                    val email = document.getString("emailUser")
                     if (!name.equals(currentUserName)){
-                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf()))
+                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false))
                     }
                 }
 

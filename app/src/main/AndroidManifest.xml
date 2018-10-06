@@ -81,7 +81,7 @@
         </service>
 
         <activity
-            android:name=".activities.settings.MyAcountActivity"
+            android:name=".activities.settings.MyAccountActivity"
             android:theme="@style/AppThemeAppBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

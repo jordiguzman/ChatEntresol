@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordActivity
-import appkite.jordiguzman.com.xatentresol.activities.settings.MyAcountActivity
+import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
 import appkite.jordiguzman.com.xatentresol.activities.users.UsersBannedActivity
@@ -89,7 +89,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun toMyAcount() {
-        startActivity<MyAcountActivity>()
+        startActivity<MyAccountActivity>()
     }
 
 

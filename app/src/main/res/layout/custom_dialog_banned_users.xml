@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <Button
-        android:id="@+id/btn_yes"
+        android:id="@+id/btn_report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -59,7 +59,7 @@
         tools:targetApi="lollipop" />
 
     <Button
-        android:id="@+id/btn_no"
+        android:id="@+id/btn_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

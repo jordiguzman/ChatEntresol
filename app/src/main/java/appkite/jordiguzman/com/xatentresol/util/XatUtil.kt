@@ -17,7 +17,6 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 
-
 object XatUtil   {
 
     private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
@@ -29,20 +28,7 @@ object XatUtil   {
     private var mAuth: FirebaseAuth? = null
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
     private val chatChannelsGroupCollectionRef = chatInstance.collection("chatChannelsGroup")
-
-
-    fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
-        currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
-            if (!documentSnapshot.exists()) {
-                val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                        "", null,  mutableListOf())
-                currentUserDocRef.set(newUser).addOnSuccessListener {
-                    onComplete()
-                }
-            } else
-                onComplete()
-        }
-    }
+    private var name = ""
 
 
     /**
@@ -61,11 +47,11 @@ object XatUtil   {
                     }
                 }
     }
-    fun verifiedUserEmail(context: Context): Boolean{
+    fun verifiedUserEmail(): Boolean{
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
         if (!user!!.isEmailVerified){
-            Toast.makeText(context, "Verifica tu cuenta en el correo.", Toast.LENGTH_SHORT).show()
+
             return false
         }
         return  true
@@ -75,6 +61,25 @@ object XatUtil   {
      * *****************   USERS *****************
      */
 
+    fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
+        getAllUsers()
+        if (name == FirebaseAuth.getInstance().currentUser?.displayName){
+
+
+        }
+        currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
+            if (!documentSnapshot.exists()) {
+                val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
+                        "", null,  mutableListOf(),
+                        FirebaseAuth.getInstance().currentUser?.email.toString()
+                        ,false)
+                currentUserDocRef.set(newUser).addOnSuccessListener {
+                    onComplete()
+                }
+            } else
+                onComplete()
+        }
+    }
 
     fun deleteCurrentUser(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -93,14 +98,15 @@ object XatUtil   {
         currentUserDocRef.delete()
     }
 
-    fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null) {
+    fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null, isBanned: Boolean = false) {
         val userFieldMap = mutableMapOf<String, Any>()
         if (name.isNotBlank()) userFieldMap["name"] = name
         if (bio.isNotBlank()) userFieldMap["bio"] = bio
+        if (!isBanned)userFieldMap["Banned"] = isBanned
         if (profilePicturePath != null){
             userFieldMap["profilePicturePath"] = profilePicturePath
-
         }
+
 
 
         currentUserDocRef.update(userFieldMap)
@@ -116,6 +122,21 @@ object XatUtil   {
              Log.d("Error", e.message)
 
          }
+    }
+    fun getAllUsers(){
+        val pathUser = "users"
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection(pathUser)
+        userRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                for (document in task.result){
+                    name = document.getString("name")!!
+
+                }
+
+
+            }
+        }
     }
 
     /**

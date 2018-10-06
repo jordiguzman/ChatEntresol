@@ -54,6 +54,8 @@
     <string name="reportar">Reportar</string>
     <string name="salir">Salir</string>
     <string name="introduce_el_texto_aqu">Introduce el texto aquí</string>
+    <string name="message_to_banned_user">Has sido reportado por un usuario por un comportamiento inadecuado. Esto es un aviso. La segunda vez que tengas un incidente serás eliminado como usuario de XatEntresòl.</string>
+    <string name="enviando_reporte">Enviando reporte. Por favor espera.</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>

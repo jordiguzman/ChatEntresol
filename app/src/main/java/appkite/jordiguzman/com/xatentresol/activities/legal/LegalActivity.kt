@@ -11,9 +11,7 @@ class LegalActivity : AppCompatActivity() {
 
     private val URL = "https://xatentresol-146fe.firebaseapp.com/"
 
-    companion object {
-        var fromLegal= false
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_legal)
@@ -28,7 +26,6 @@ class LegalActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
             android.R.id.home ->{
-                fromLegal = true
                 NavUtils.navigateUpFromSameTask(this)
                 return true
             }
