@@ -11,7 +11,7 @@
     <string name="sign_out">Salir</string>
     <string name="fire_your_message">Envia tu mensaje</string>
     <string name="button_send_alt">Botón Enviar</string>
-    <string name="continue_amp_sign_in"><![CDATA[Continue & Sign In]]></string>
+    <string name="continue_amp_sign_in"><![CDATA[Continuar o Registrarse]]></string>
     <string name="logo_kick_alt">Logo Kick</string>
     <string name="settings">Configuración</string>
     <string name="help">Ayuda</string>
@@ -39,7 +39,7 @@
     <string name="profile_image_user_alt">Imagen Perfil Usuario</string>
     <string name="logo_settings_alt">Logo Configuración</string>
     <string name="notificaciones_push">Notificaciones push</string>
-    <string name="all_users">Ver todos los usuarios (Debug)</string>
+    <string name="all_users">Reportar a un usuario</string>
     <string name="legal_info">Información legal</string>
     <string name="aprieta_la_imagen_para_volver_atr_s">Aprieta la imagen para volver atrás</string>
     <string name="camara">Cámara</string>
@@ -56,6 +56,8 @@
     <string name="introduce_el_texto_aqu">Introduce el texto aquí</string>
     <string name="message_to_banned_user">Has sido reportado por un usuario por un comportamiento inadecuado. Esto es un aviso. La segunda vez que tengas un incidente serás eliminado como usuario de XatEntresòl.</string>
     <string name="enviando_reporte">Enviando reporte. Por favor espera.</string>
+    <string name="aviso_nombre">Se ha detectado que hay otro usuario con el mismo nombre de usuario. Por favor introduce otro nombre distinto.\n\Tambien es indispensable que pongas una imagen de perfil.</string>
+    <string name="aviso_phptp">Es indispensable que pongas una imagen de perfil.</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>

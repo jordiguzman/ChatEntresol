@@ -1,5 +1,6 @@
 package appkite.jordiguzman.com.xatentresol.activities.settings
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,13 +9,18 @@ import android.provider.MediaStore
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.text.InputFilter
+import android.view.LayoutInflater
 import android.view.MenuItem
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
+import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_my_acount.*
+import kotlinx.android.synthetic.main.custom_dialog_photo_name.view.*
 import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.intentFor
@@ -30,7 +36,12 @@ class MyAccountActivity : AppCompatActivity() {
     private var maxLength = 25
     companion object {
         var fromMyAcount = false
+
     }
+    private var nameRepeat = false
+    var nameUserRepeat = ArrayList<String>()
+    var nameUsers = ArrayList<User>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +49,18 @@ class MyAccountActivity : AppCompatActivity() {
 
         initView()
         setupEdittextCount()
+
+        nameUserRepeat.clear()
+        nameUsers.clear()
+
+        getAllUsers()
+        if (!nameUserRepeat.isEmpty()){
+            alertChangeName()
+        }
+
+
+
+
 
         imageView_profile_picture.setOnClickListener {
             val intent = Intent().apply {
@@ -57,12 +80,14 @@ class MyAccountActivity : AppCompatActivity() {
                 StorageUtil.uploadProfilePhoto(selectedImageBytes){imagePath->
                     XatUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), imagePath)
+
                 }
 
             else
                 XatUtil.updateCurrentUser(editText_name.text.toString(),
                         editText_bio.text.toString(), null)
             longSnackbar(constraint_layout_fragment_my_acount, "Saved")
+
             deactiveUserProfile()
         }
 
@@ -71,6 +96,7 @@ class MyAccountActivity : AppCompatActivity() {
                     .signOut(this)
                     .addOnCompleteListener {
                         SignInActivity.firstTime = true
+
                         startActivity(intentFor<SignInActivity>().newTask().clearTask())
                     }
         }
@@ -82,6 +108,51 @@ class MyAccountActivity : AppCompatActivity() {
 
 
 
+    }
+
+    private fun getAllUsers(){
+        if (!nameUsers.isEmpty()) nameUsers.clear()
+        val pathUser = "users"
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection(pathUser)
+        userRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                for (document in task.result){
+                    nameUsers.add(User(document.getString("name")!!, "", "", mutableListOf(), "", false))
+
+                }
+            }
+            checkRepeatUserName()
+        }
+    }
+    private fun checkRepeatUserName() {
+        for (i: Int in nameUsers.indices-1) {
+            if (nameUsers[i].name == FirebaseAuth.getInstance().currentUser?.displayName) {
+                val name = nameUsers[i].name
+                nameUserRepeat.add(name)
+                if (!nameUserRepeat.isEmpty()){
+                    alertChangeName()
+                }
+            }
+
+        }
+    }
+
+
+    @SuppressLint("InflateParams")
+    private fun alertChangeName() {
+        val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog_photo_name, null)
+        val builder = android.support.v7.app.AlertDialog.Builder(this)
+                .setView(dialog)
+        val alertDialog = builder.show()
+        alertDialog.show()
+        dialog.btn_ok_name_photo.setOnClickListener {
+            fromMyAcount =true
+            nameUsers.clear()
+            nameUserRepeat.clear()
+
+            alertDialog.dismiss()
+        }
     }
 
     private fun setupEdittextCount() {
@@ -123,7 +194,6 @@ class MyAccountActivity : AppCompatActivity() {
 
     private fun initView() {
         XatUtil.getCurrentUser { user ->
-
             editText_name.setText(user.name)
             editText_bio.setText(user.bio)
             if (!pictureJustChanged && user.profilePicturePath != null) {
@@ -134,18 +204,27 @@ class MyAccountActivity : AppCompatActivity() {
 
             } else {
                 if (!pictureJustChanged || user.profilePicturePath == null)
-                    longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
-
+                    if (!nameRepeat){
+                        longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
+                    }
             }
         }
     }
+
+    //TODO Resolver lo de más abajo
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item!!.itemId){
             android.R.id.home ->{
                 return if (!pictureJustChanged){
-                    longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
-                    false
+                   /* XatUtil.nameUserRepeat.clear()
+                    XatUtil.getAllUsers()
+                    Log.d("repeatUsers", XatUtil.nameUserRepeat.size.toString())
+                    if (!XatUtil.nameUserRepeat.isEmpty()){
+                        alertChangeName()
+                        return true
+                    }*/
+                    return false
                 } else {
                     fromMyAcount = true
                     NavUtils.navigateUpFromSameTask(this)
@@ -158,7 +237,12 @@ class MyAccountActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
+       /* XatUtil.nameUserRepeat.clear()
+        XatUtil.getAllUsers()
+        Log.d("repeatUsers", XatUtil.nameUserRepeat.size.toString())
+        if (!XatUtil.nameUserRepeat.isEmpty()){
+            alertChangeName()
+        }*/
 
     }
 

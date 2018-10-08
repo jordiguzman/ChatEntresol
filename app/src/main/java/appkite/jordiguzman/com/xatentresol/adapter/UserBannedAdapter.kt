@@ -106,7 +106,6 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         }
     }
     private fun sendMessageToUserBanned() {
-        //val progressDialog = context.indeterminateProgressDialog("Sending Email. Please wait.")
         val sender = Thread(Runnable {
             try {
                 val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
@@ -114,7 +113,6 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
                         messageToBannedUser,
                         "xatentresol.report@gmail.com",
                         emailUserBanned)
-                //progressDialog.dismiss()
             } catch (e: Exception) {
                 Log.e("mylog", "Error: " + e.message)
             }

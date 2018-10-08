@@ -28,8 +28,6 @@ object XatUtil   {
     private var mAuth: FirebaseAuth? = null
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
     private val chatChannelsGroupCollectionRef = chatInstance.collection("chatChannelsGroup")
-    private var name = ""
-
 
     /**
      * *************   Email ********************
@@ -62,11 +60,8 @@ object XatUtil   {
      */
 
     fun initCurrentUserIfFirstTime(onComplete: () -> Unit) {
-        getAllUsers()
-        if (name == FirebaseAuth.getInstance().currentUser?.displayName){
 
 
-        }
         currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
             if (!documentSnapshot.exists()) {
                 val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
@@ -80,6 +75,7 @@ object XatUtil   {
                 onComplete()
         }
     }
+
 
     fun deleteCurrentUser(){
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -102,12 +98,10 @@ object XatUtil   {
         val userFieldMap = mutableMapOf<String, Any>()
         if (name.isNotBlank()) userFieldMap["name"] = name
         if (bio.isNotBlank()) userFieldMap["bio"] = bio
-        if (!isBanned)userFieldMap["Banned"] = isBanned
+        if (!isBanned)userFieldMap["banned"] = isBanned
         if (profilePicturePath != null){
             userFieldMap["profilePicturePath"] = profilePicturePath
         }
-
-
 
         currentUserDocRef.update(userFieldMap)
     }
@@ -123,21 +117,7 @@ object XatUtil   {
 
          }
     }
-    fun getAllUsers(){
-        val pathUser = "users"
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection(pathUser)
-        userRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful){
-                for (document in task.result){
-                    name = document.getString("name")!!
 
-                }
-
-
-            }
-        }
-    }
 
     /**
      * ******************* LISTENER **********************************

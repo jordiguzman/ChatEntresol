@@ -17,11 +17,9 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.custom_dialog_notice.view.*
-import org.jetbrains.anko.clearTask
+import kotlinx.android.synthetic.main.custom_dialog_photo_name.view.*
+import org.jetbrains.anko.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.indeterminateProgressDialog
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.newTask
 
 @Suppress("DEPRECATION")
 class SignInActivity : AppCompatActivity() {
@@ -31,6 +29,7 @@ class SignInActivity : AppCompatActivity() {
     companion object {
         var firstTime: Boolean? = true
     }
+
     private val signInProviders =
             listOf(AuthUI.IdpConfig.EmailBuilder()
                     .setAllowNewAccounts(true)
@@ -41,8 +40,9 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
-        //TODO Revisar que no salga el aviso de consultar el correo la primera vez y revisar los dos campor Banned y banned creados.
+
         readShared()
+
         if (!visible!! )alertDialog()
         if (!firstTime!!)longSnackbar(constraint_layout_signin, R.string.verifica_correo)
         account_sign_in.setOnClickListener {
@@ -53,6 +53,8 @@ class SignInActivity : AppCompatActivity() {
             startActivityForResult(intent, rcSigning)
         }
     }
+
+
 
     private fun readShared() {
         val sharedPreferences: SharedPreferences = this.getSharedPreferences("view", android.content.Context.MODE_PRIVATE)
@@ -76,11 +78,15 @@ class SignInActivity : AppCompatActivity() {
             if (dialog.checkBox_notice.isChecked) {
                 visible = true
                 shared()
-                longSnackbar(constraint_layout_signin, R.string.verifica_correo)
+                if (!firstTime!!){
+                    longSnackbar(constraint_layout_signin, R.string.verifica_correo)
+                }
+
             }
             alertDialog.dismiss()
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -93,12 +99,15 @@ class SignInActivity : AppCompatActivity() {
 
                 XatUtil.initCurrentUserIfFirstTime {
 
+
+
                     if (!XatUtil.verifiedUserEmail()){
                         XatUtil.sendEmailVerification(this)
                     }
                     startActivity(intentFor<MainActivity>().newTask().clearTask())
                     val registrationToken = FirebaseInstanceId.getInstance().token
                     MyFirebaseInstanceIDService.addTokenXat(registrationToken)
+
                     progressDialog.dismiss()
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -110,6 +119,19 @@ class SignInActivity : AppCompatActivity() {
                         longSnackbar(constraint_layout_signin, "Unknown error")
                 }
             }
+        }
+    }
+
+    private fun alertChangeName() {
+        val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog_photo_name, null)
+        val builder = android.support.v7.app.AlertDialog.Builder(this)
+                .setView(dialog)
+        val alertDialog = builder.show()
+        alertDialog.show()
+        dialog.btn_ok_name_photo.setOnClickListener {
+            MyAccountActivity.fromMyAcount =true
+            startActivity<MainActivity>()
+            alertDialog.dismiss()
         }
     }
 
