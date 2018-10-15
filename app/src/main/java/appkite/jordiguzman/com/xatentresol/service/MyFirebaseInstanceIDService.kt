@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package appkite.jordiguzman.com.xatentresol.service
 
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
@@ -7,6 +9,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService
 
 
 
+@Suppress("DEPRECATION", "OverridingDeprecatedMember")
 class MyFirebaseInstanceIDService: FirebaseInstanceIdService() {
 
     override fun onTokenRefresh() {
@@ -17,15 +20,15 @@ class MyFirebaseInstanceIDService: FirebaseInstanceIdService() {
     }
 
     companion object {
-        fun addTokenXat(newRegistrtionToken: String?){
-            if (newRegistrtionToken == null) throw NullPointerException("FCM token is null")
+        fun addTokenXat(newRegistrationToken: String?){
+            if (newRegistrationToken == null) throw NullPointerException("FCM token is null")
 
             //TODO anular cuando el usuario lo desee
             XatUtil.getFCMRegistrtionTokens { tokens ->
-                if (tokens.contains(newRegistrtionToken))
+                if (tokens.contains(newRegistrationToken))
                     return@getFCMRegistrtionTokens
 
-                tokens.add(newRegistrtionToken)
+                tokens.add(newRegistrationToken)
                 XatUtil.setFCMRegistrtionTokens(tokens)
             }
         }

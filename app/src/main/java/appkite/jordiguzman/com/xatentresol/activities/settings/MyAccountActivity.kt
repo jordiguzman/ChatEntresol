@@ -17,7 +17,6 @@ import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_my_acount.*
 import kotlinx.android.synthetic.main.custom_dialog_photo_name.view.*
@@ -27,20 +26,25 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import java.io.ByteArrayOutputStream
 
+private const val RC_SELECT_IMAGE = 2
+
+
 class MyAccountActivity : AppCompatActivity() {
 
-    private val RC_SELECT_IMAGE = 2
     private lateinit var selectedImageBytes: ByteArray
     private var pictureJustChanged = false
     private var isEditable = false
     private var maxLength = 25
-    companion object {
-        var fromMyAcount = false
 
+    companion object {
+        var fromMyAccount = false
     }
+
     private var nameRepeat = false
-    var nameUserRepeat = ArrayList<String>()
-    var nameUsers = ArrayList<User>()
+    private var alertRepeat = false
+    private var nameUsers = ArrayList<User>()
+    private var currentUser = ""
+    private var currentUserUid = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,17 +54,9 @@ class MyAccountActivity : AppCompatActivity() {
         initView()
         setupEdittextCount()
 
-        nameUserRepeat.clear()
+
         nameUsers.clear()
-
         getAllUsers()
-        if (!nameUserRepeat.isEmpty()){
-            alertChangeName()
-        }
-
-
-
-
 
         imageView_profile_picture.setOnClickListener {
             val intent = Intent().apply {
@@ -77,17 +73,16 @@ class MyAccountActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (::selectedImageBytes.isInitialized)
-                StorageUtil.uploadProfilePhoto(selectedImageBytes){imagePath->
+                StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
                     XatUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), imagePath)
 
                 }
-
             else
                 XatUtil.updateCurrentUser(editText_name.text.toString(),
                         editText_bio.text.toString(), null)
             longSnackbar(constraint_layout_fragment_my_acount, "Saved")
-
+            getAllUsers()
             deactiveUserProfile()
         }
 
@@ -106,35 +101,40 @@ class MyAccountActivity : AppCompatActivity() {
         }
 
 
-
-
     }
 
-    private fun getAllUsers(){
+
+    private fun getAllUsers() {
         if (!nameUsers.isEmpty()) nameUsers.clear()
         val pathUser = "users"
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection(pathUser)
         userRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful){
-                for (document in task.result){
-                    nameUsers.add(User(document.getString("name")!!, "", "", mutableListOf(), "", false))
+            if (task.isSuccessful) {
+                for (document in task.result) {
+                    nameUsers.add(User(document.getString("name")!!, "", "", mutableListOf(), "", false, document.getString("uidUser")!!))
 
                 }
             }
+
             checkRepeatUserName()
         }
     }
+
+
     private fun checkRepeatUserName() {
-        for (i: Int in nameUsers.indices-1) {
-            if (nameUsers[i].name == FirebaseAuth.getInstance().currentUser?.displayName) {
+        XatUtil.getCurrentUser { User ->
+            currentUser = User.name
+            currentUserUid = User.uidUser
+            for (i: Int in nameUsers.indices) {
                 val name = nameUsers[i].name
-                nameUserRepeat.add(name)
-                if (!nameUserRepeat.isEmpty()){
+                val uid = nameUsers[i].uidUser
+                if (name == currentUser && uid != currentUserUid) {
+                    alertRepeat = true
+                    activeUserProfile()
                     alertChangeName()
                 }
             }
-
         }
     }
 
@@ -147,10 +147,10 @@ class MyAccountActivity : AppCompatActivity() {
         val alertDialog = builder.show()
         alertDialog.show()
         dialog.btn_ok_name_photo.setOnClickListener {
-            fromMyAcount =true
+            fromMyAccount = true
+            nameRepeat = true
             nameUsers.clear()
-            nameUserRepeat.clear()
-
+            checkRepeatUserName()
             alertDialog.dismiss()
         }
     }
@@ -181,7 +181,7 @@ class MyAccountActivity : AppCompatActivity() {
     }
 
     private fun deactiveUserProfile() {
-       editText_name.isEnabled = false
+        editText_name.isEnabled = false
         editText_bio.isEnabled = false
         imageView_profile_picture.isEnabled = false
     }
@@ -204,29 +204,21 @@ class MyAccountActivity : AppCompatActivity() {
 
             } else {
                 if (!pictureJustChanged || user.profilePicturePath == null)
-                    if (!nameRepeat){
+                    if (!nameRepeat || !alertRepeat) {
                         longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
                     }
             }
         }
     }
 
-    //TODO Resolver lo de más abajo
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item!!.itemId){
-            android.R.id.home ->{
-                return if (!pictureJustChanged){
-                   /* XatUtil.nameUserRepeat.clear()
-                    XatUtil.getAllUsers()
-                    Log.d("repeatUsers", XatUtil.nameUserRepeat.size.toString())
-                    if (!XatUtil.nameUserRepeat.isEmpty()){
-                        alertChangeName()
-                        return true
-                    }*/
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                return if (!pictureJustChanged) {
                     return false
                 } else {
-                    fromMyAcount = true
+                    fromMyAccount = true
                     NavUtils.navigateUpFromSameTask(this)
                     true
                 }
@@ -234,16 +226,6 @@ class MyAccountActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-       /* XatUtil.nameUserRepeat.clear()
-        XatUtil.getAllUsers()
-        Log.d("repeatUsers", XatUtil.nameUserRepeat.size.toString())
-        if (!XatUtil.nameUserRepeat.isEmpty()){
-            alertChangeName()
-        }*/
-
     }
 
 }

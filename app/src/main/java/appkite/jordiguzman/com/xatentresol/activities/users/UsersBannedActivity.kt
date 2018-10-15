@@ -25,7 +25,7 @@ class UsersBannedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_users_banned)
 
         getCurrentUserName()
-        getAllUsers()
+
 
 
 
@@ -51,7 +51,7 @@ class UsersBannedActivity : AppCompatActivity() {
     private fun getCurrentUserName() {
         XatUtil.getCurrentUser { user ->
             currentUserName = user.name
-
+            getAllUsers()
         }
     }
 
@@ -68,8 +68,9 @@ class UsersBannedActivity : AppCompatActivity() {
                     val name = document.getString("name")
                     val profilePicturePath = document.getString("profilePicturePath")
                     val email = document.getString("emailUser")
+                    val uid = document.getString("uidUser")
                     if (!name.equals(currentUserName)){
-                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false))
+                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false, uid!!))
                     }
                 }
 

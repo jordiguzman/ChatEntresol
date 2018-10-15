@@ -35,9 +35,12 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
     override fun onBindViewHolder(holder: AdapterUserBannedViewHolder, position: Int) {
          holder.tvBannedUsers.text = userBanned[position].name
 
-        GlideApp.with(context)
-                .load(StorageUtil.pathToReference(userBanned[position].profilePicturePath!!))
-                .into(holder.photoBannedUsers)
+        if (userBanned[position].profilePicturePath != null){
+            GlideApp.with(context)
+                    .load(StorageUtil.pathToReference(userBanned[position].profilePicturePath!!))
+                    .into(holder.photoBannedUsers)
+        }
+
 
 
         holder.cardViewBannedUser.setOnClickListener {
@@ -55,6 +58,10 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
     }
 
     private fun updateBannedUser(position: Int) {
+        if (userBanned[position].isBanned){
+            alertDialogDelete()
+            return
+        }
         reportEmailBody = userBanned[position].name
         val bio = userBanned[position].bio
         val profilePicturePath = userBanned[position].profilePicturePath
@@ -62,12 +69,22 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         userBanned[position].isBanned = true
         isBannedUser = userBanned[position].isBanned
         XatUtil.updateCurrentUser(reportEmailBody, bio, profilePicturePath, true)
-        saveIsBanned()
-    }
-
-    private fun saveIsBanned() {
 
     }
+
+    //TODO hacer el alert dialog para borra el usuario con au llamada a XatUtil
+    @SuppressLint("InflateParams")
+    private fun alertDialogDelete() {
+        val dialog = LayoutInflater.from(context).inflate(R.layout.custom_dialog_banned_users, null)
+        val builder = AlertDialog.Builder(context)
+                .setView(dialog)
+                .setTitle(R.string.report_user_message)
+        val alertDialog = builder.show()
+        XatUtil.deleteBannedUser() //!!!
+        alertDialog.show()
+    }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterUserBannedViewHolder {
          val v = LayoutInflater.from(parent.context).inflate(R.layout.item_banned_users, parent, false)
@@ -122,6 +139,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
 
     private fun sendMessageToAdmin() {
         val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
+        val idBanedUser = StorageUtil.getIdOfBannedUser()
         val sender = Thread(Runnable {
             try {
                 val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
@@ -129,7 +147,9 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
                         reportEmailBody.plus("\n")
                                 .plus(comment)
                                 .plus("\n")
-                                .plus(emailUserBanned),
+                                .plus(emailUserBanned)
+                                .plus("\n")
+                                .plus(idBanedUser),
                         "xatentresol.report@gmail.com",
                         "xatentresol.report@gmail.com")
                 progressDialog.dismiss()

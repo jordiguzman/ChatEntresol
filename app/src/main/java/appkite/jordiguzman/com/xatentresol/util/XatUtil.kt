@@ -67,7 +67,7 @@ object XatUtil   {
                 val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                         "", null,  mutableListOf(),
                         FirebaseAuth.getInstance().currentUser?.email.toString()
-                        ,false)
+                        ,false, FirebaseAuth.getInstance().currentUser?.uid!!)
                 currentUserDocRef.set(newUser).addOnSuccessListener {
                     onComplete()
                 }
@@ -85,13 +85,17 @@ object XatUtil   {
                 .delete()
         chatChannelsCollectionRef.document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .delete()
-        /**
-         * The profile photos not delete. If the amount of these is great delete manually.
-         */
+
+
+        //TODO inform to admin with uid from deleted user. And make method to delete user banned.
 
         val auth = FirebaseAuth.getInstance().currentUser
         auth?.delete()
         currentUserDocRef.delete()
+    }
+
+    fun deleteBannedUser(){
+
     }
 
     fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null, isBanned: Boolean = false) {
@@ -117,6 +121,7 @@ object XatUtil   {
 
          }
     }
+
 
 
     /**

@@ -4,16 +4,12 @@ package appkite.jordiguzman.com.xatentresol.activities.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.support.design.internal.BottomNavigationItemView
-import android.support.design.internal.BottomNavigationMenuView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.FrameLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.chat.GroupChatActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
@@ -51,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        if (MyAccountActivity.fromMyAcount){
+        if (MyAccountActivity.fromMyAccount){
             replaceFragment(SettingsFragment())
             navigation.selectedItemId = R.id.navigation_settings
         }
@@ -113,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("PrivateResource")
+    /*@SuppressLint("PrivateResource")
     private fun addBadge(position: Int){
         val bottomMenu = navigation.getChildAt(0) as? BottomNavigationMenuView
         val v = bottomMenu?.getChildAt(position) as? BottomNavigationItemView
@@ -128,8 +124,9 @@ class MainActivity : AppCompatActivity() {
 
         }
         v?.addView(badge, badgeLayout)
-    }
+    }*/
 
+    @SuppressLint("InflateParams")
     private fun alertDialog(){
         val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
         val builder = AlertDialog.Builder(this)

@@ -56,8 +56,9 @@
     <string name="introduce_el_texto_aqu">Introduce el texto aquí</string>
     <string name="message_to_banned_user">Has sido reportado por un usuario por un comportamiento inadecuado. Esto es un aviso. La segunda vez que tengas un incidente serás eliminado como usuario de XatEntresòl.</string>
     <string name="enviando_reporte">Enviando reporte. Por favor espera.</string>
-    <string name="aviso_nombre">Se ha detectado que hay otro usuario con el mismo nombre de usuario. Por favor introduce otro nombre distinto.\n\Tambien es indispensable que pongas una imagen de perfil.</string>
+    <string name="aviso_nombre">Se ha detectado que hay otro usuario con el mismo nombre de usuario. Por favor introduce otro nombre distinto.\n\ Tambien es recomendable que pongas una imagen de perfil.</string>
     <string name="aviso_phptp">Es indispensable que pongas una imagen de perfil.</string>
+    <string name="delete_user_debug">Delete user (Debug)</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
@@ -66,6 +67,7 @@
         <item>@string/notificaciones_push</item>
         <item>@string/legal_info</item>
         <item>@string/all_users</item>
+        <item>@string/delete_user_debug</item>
     </string-array>
 
 </resources>

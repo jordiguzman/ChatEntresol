@@ -17,9 +17,11 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.custom_dialog_notice.view.*
-import kotlinx.android.synthetic.main.custom_dialog_photo_name.view.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.clearTask
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.indeterminateProgressDialog
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 
 @Suppress("DEPRECATION")
 class SignInActivity : AppCompatActivity() {
@@ -99,8 +101,6 @@ class SignInActivity : AppCompatActivity() {
 
                 XatUtil.initCurrentUserIfFirstTime {
 
-
-
                     if (!XatUtil.verifiedUserEmail()){
                         XatUtil.sendEmailVerification(this)
                     }
@@ -122,18 +122,6 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    private fun alertChangeName() {
-        val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog_photo_name, null)
-        val builder = android.support.v7.app.AlertDialog.Builder(this)
-                .setView(dialog)
-        val alertDialog = builder.show()
-        alertDialog.show()
-        dialog.btn_ok_name_photo.setOnClickListener {
-            MyAccountActivity.fromMyAcount =true
-            startActivity<MainActivity>()
-            alertDialog.dismiss()
-        }
-    }
 
     override fun onBackPressed() {
 

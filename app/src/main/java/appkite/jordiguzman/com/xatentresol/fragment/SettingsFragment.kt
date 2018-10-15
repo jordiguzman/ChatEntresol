@@ -36,6 +36,7 @@ class SettingsFragment : Fragment() {
             R.drawable.ic_person)
 
 
+
             @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,10 +54,11 @@ class SettingsFragment : Fragment() {
                 when (position) {
                     0 -> alertDialog()
                     1 -> changePassword()
-                    2 -> toMyAcount()
+                    2 -> toMyAccount()
                     3 -> pushNotification()
                     4 -> toLegal()
                     5 -> showUsers()
+
 
                 }
             }
@@ -78,7 +80,7 @@ class SettingsFragment : Fragment() {
     private fun populateList(): ArrayList<ItemSettings>{
         val list = ArrayList<ItemSettings>()
 
-        for (i in 0..5){
+        for (i in listLogo.indices){
             val itemSettings = ItemSettings()
             itemSettings.setLogo(listLogo[i])
             itemSettings.setTitles(resources.getStringArray(R.array.list_settings)[i])
@@ -88,7 +90,7 @@ class SettingsFragment : Fragment() {
         return list
     }
 
-    private fun toMyAcount() {
+    private fun toMyAccount() {
         startActivity<MyAccountActivity>()
     }
 
