@@ -59,6 +59,12 @@
     <string name="aviso_nombre">Se ha detectado que hay otro usuario con el mismo nombre de usuario. Por favor introduce otro nombre distinto.\n\ Tambien es recomendable que pongas una imagen de perfil.</string>
     <string name="aviso_phptp">Es indispensable que pongas una imagen de perfil.</string>
     <string name="delete_user_debug">Delete user (Debug)</string>
+    <string name="notification_off">Desactivar notificaciones push</string>
+    <string name="notification_on">Notificaciones push</string>
+    <string name="notication_sound_on">Activar sonido</string>
+    <string name="notication_sound_off">Desactivar sonido</string>
+    <string name="notification_vibration_on">Activar vibración</string>
+    <string name="notification_vibration_off">Desactivar vibración</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
@@ -68,6 +74,12 @@
         <item>@string/legal_info</item>
         <item>@string/all_users</item>
         <item>@string/delete_user_debug</item>
+    </string-array>
+
+    <string-array name="list_notifications">
+        <item>@string/notication_sound_on</item>
+        <item>@string/notification_vibration_on</item>
+
     </string-array>
 
 </resources>

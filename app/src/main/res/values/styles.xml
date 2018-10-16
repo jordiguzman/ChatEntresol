@@ -32,9 +32,9 @@
     </style>
 
     <style name="SplashTeme" parent="Theme.AppCompat.NoActionBar">
-
-
     </style>
+
+
 
     <style name="CustomActionBarTheme"
         parent="@android:style/Theme.Holo.Light.DarkActionBar">

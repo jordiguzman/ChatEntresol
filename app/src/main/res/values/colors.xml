@@ -5,7 +5,7 @@
 
 
     <color name="colorPrimaryDark">#D32F2F</color>
-    <color name="colorAccent">#FFC107</color>
+    <color name="colorAccent">#1a4dac</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
@@ -14,5 +14,6 @@
     <color name="background">#fcf4f0</color>
     <color name="color_user">#d45b5b</color>
     <color name="color_background_chat">#eacdcd</color>
+    <color name="trasparent">#00ffffff</color>
 
 </resources>
