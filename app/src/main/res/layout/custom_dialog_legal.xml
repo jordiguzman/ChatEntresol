@@ -3,14 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="appkite.jordiguzman.com.xatentresol.activities.legal.LegalActivity">
 
-
-    <ListView
-        android:id="@+id/lv_notifications_audio"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:choiceMode="singleChoice"
+    <WebView
+        android:id="@+id/web_view_signin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,8 @@
 package appkite.jordiguzman.com.xatentresol.activities.settings
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
 import appkite.jordiguzman.com.xatentresol.R
 import kotlinx.android.synthetic.main.activity_notifications_settings.*
@@ -11,6 +13,7 @@ class NotificationsSettingsActivity : AppCompatActivity() {
 
     companion object {
         var noNotifications = true
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +38,13 @@ class NotificationsSettingsActivity : AppCompatActivity() {
         switch_notification_main2.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked){
                 startActivity<DialogNotificationsAudioActivity>()
+
+            }
+        }
+        switch_notification_main3.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                val vibratorService = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                vibratorService.vibrate(500)
 
             }
         }

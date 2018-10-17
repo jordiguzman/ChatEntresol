@@ -65,6 +65,10 @@
     <string name="notication_sound_off">Desactivar sonido</string>
     <string name="notification_vibration_on">Activar vibración</string>
     <string name="notification_vibration_off">Desactivar vibración</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="rechazar">Rechazar</string>
+    <string name="aviso_rechazo_legal">Lo sentimos, no podrás entrar en la app</string>
+    <string name="aviso_legal">Aviso Legal</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>

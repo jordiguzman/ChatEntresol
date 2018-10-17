@@ -7,9 +7,10 @@ import android.view.MenuItem
 import appkite.jordiguzman.com.xatentresol.R
 import kotlinx.android.synthetic.main.activity_legal.*
 
-class LegalActivity : AppCompatActivity() {
 
-    private val URL = "https://xatentresol-146fe.firebaseapp.com/"
+private const val URL = "https://xatentresol-146fe.firebaseapp.com/"
+
+class LegalActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
