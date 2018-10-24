@@ -8,7 +8,7 @@
     <string name="my_name">Mi Nombre</string>
     <string name="my_bio">Mi Bio</string>
     <string name="save">Guardar</string>
-    <string name="sign_out">Salir</string>
+    <string name="sign_out">Cerrar sesión</string>
     <string name="fire_your_message">Envia tu mensaje</string>
     <string name="button_send_alt">Botón Enviar</string>
     <string name="continue_amp_sign_in"><![CDATA[Continuar o Registrarse]]></string>
@@ -69,6 +69,9 @@
     <string name="rechazar">Rechazar</string>
     <string name="aviso_rechazo_legal">Lo sentimos, no podrás entrar en la app</string>
     <string name="aviso_legal">Aviso Legal</string>
+    <string name="editar_nombre_usuario">Editar nombre usuario</string>
+    <string name="editar_bio_usuario">Editar bio usuario</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
@@ -77,7 +80,7 @@
         <item>@string/notificaciones_push</item>
         <item>@string/legal_info</item>
         <item>@string/all_users</item>
-        <item>@string/delete_user_debug</item>
+        <item>@string/cerrar_sesion</item>
     </string-array>
 
     <string-array name="list_notifications">

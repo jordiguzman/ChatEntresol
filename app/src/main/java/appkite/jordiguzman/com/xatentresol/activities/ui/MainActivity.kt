@@ -109,22 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /*@SuppressLint("PrivateResource")
-    private fun addBadge(position: Int){
-        val bottomMenu = navigation.getChildAt(0) as? BottomNavigationMenuView
-        val v = bottomMenu?.getChildAt(position) as? BottomNavigationItemView
 
-        val badge = LayoutInflater.from(this)
-                .inflate(R.layout.badge_layout, bottomMenu, false)
-
-        val badgeLayout: FrameLayout.LayoutParams = FrameLayout.LayoutParams(badge?.layoutParams).apply {
-            gravity = Gravity.CENTER_HORIZONTAL
-            topMargin = resources.getDimension(R.dimen.design_bottom_navigation_margin).toInt()
-            leftMargin = resources.getDimension(R.dimen.bagde_left_margin).toInt()
-
-        }
-        v?.addView(badge, badgeLayout)
-    }*/
 
     @SuppressLint("InflateParams")
     private fun alertDialog(){
@@ -150,12 +135,6 @@ class MainActivity : AppCompatActivity() {
         if (!XatUtil.verifiedUserEmail()){
             SignInActivity.firstTime = false
             startActivity<SignInActivity>()
-        } else{
-            XatUtil.getCurrentUser { User ->
-                if (User.profilePicturePath == null){
-                    startActivity<MyAccountActivity>()
-                }
-            }
         }
 
     }

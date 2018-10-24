@@ -39,6 +39,8 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
             GlideApp.with(context)
                     .load(StorageUtil.pathToReference(userBanned[position].profilePicturePath!!))
                     .into(holder.photoBannedUsers)
+        }else{
+            holder.photoBannedUsers.background = ContextCompat.getDrawable(context, R.drawable.ic_person)
         }
 
 

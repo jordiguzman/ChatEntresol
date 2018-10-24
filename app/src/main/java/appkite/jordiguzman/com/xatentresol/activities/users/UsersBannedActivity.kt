@@ -1,11 +1,14 @@
 package appkite.jordiguzman.com.xatentresol.activities.users
 
 import android.os.Bundle
+import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.MenuItem
 import android.widget.LinearLayout
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.adapter.UserBannedAdapter
 import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.model.User
@@ -27,6 +30,7 @@ class UsersBannedActivity : AppCompatActivity() {
         getCurrentUserName()
 
 
+        //TODO aqui se produce el error de cambio de nombre de usuario MUY IMPORTANTE!!!
 
 
 
@@ -71,6 +75,7 @@ class UsersBannedActivity : AppCompatActivity() {
                     val uid = document.getString("uidUser")
                     if (!name.equals(currentUserName)){
                         userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false, uid!!))
+                        Log.d("banned", userListBanned.size.toString())
                     }
                 }
 
@@ -84,6 +89,17 @@ class UsersBannedActivity : AppCompatActivity() {
         rv_users_banned.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         val adapter = UserBannedAdapter(userListBanned, this)
         rv_users_banned.adapter = adapter
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            android.R.id.home -> {
+                MyAccountActivity.fromMyAccount = true
+                NavUtils.navigateUpFromSameTask(this)
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
 

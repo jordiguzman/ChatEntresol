@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.provider.MediaStore
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
@@ -12,19 +13,19 @@ import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.MenuItem
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
-import com.firebase.ui.auth.AuthUI
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_my_acount.*
 import kotlinx.android.synthetic.main.custom_dialog_photo_name.view.*
-import org.jetbrains.anko.clearTask
+import kotlinx.android.synthetic.main.notification_template_lines_media.view.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.newTask
+import org.jetbrains.anko.startActivity
 import java.io.ByteArrayOutputStream
+
 
 private const val RC_SELECT_IMAGE = 2
 
@@ -33,7 +34,6 @@ class MyAccountActivity : AppCompatActivity() {
 
     private lateinit var selectedImageBytes: ByteArray
     private var pictureJustChanged = false
-    private var isEditable = false
     private var maxLength = 25
 
     companion object {
@@ -58,7 +58,8 @@ class MyAccountActivity : AppCompatActivity() {
         nameUsers.clear()
         getAllUsers()
 
-        imageView_profile_picture.setOnClickListener {
+
+        fb_my_account.setOnClickListener {
             val intent = Intent().apply {
                 type = "image/*"
                 action = Intent.ACTION_GET_CONTENT
@@ -67,40 +68,55 @@ class MyAccountActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, "Select Image"), RC_SELECT_IMAGE)
         }
         btn_save.setOnClickListener {
-            if (isEditable) {
-                isEditable = false
-                activeUserProfile()
-                return@setOnClickListener
-            }
             if (::selectedImageBytes.isInitialized)
                 StorageUtil.uploadProfilePhoto(selectedImageBytes) { imagePath ->
                     XatUtil.updateCurrentUser(editText_name.text.toString(),
                             editText_bio.text.toString(), imagePath)
+                    longSnackbar(constraint_layout_fragment_my_acount, "Saved")
+                    delayGoToMain()
 
                 }
-            else
+            else{
                 XatUtil.updateCurrentUser(editText_name.text.toString(),
                         editText_bio.text.toString(), null)
-            longSnackbar(constraint_layout_fragment_my_acount, "Saved")
-            getAllUsers()
-            deactiveUserProfile()
-        }
+                longSnackbar(constraint_layout_fragment_my_acount, "Saved")
 
-        btn_sign_out.setOnClickListener {
-            AuthUI.getInstance()
-                    .signOut(this)
-                    .addOnCompleteListener {
-                        SignInActivity.firstTime = true
+                getAllUsers()
+                delayGoToMain()
+            }
 
-                        startActivity(intentFor<SignInActivity>().newTask().clearTask())
-                    }
-        }
-        if (btn_save.text == "Edit profile" || btn_save.text == "Editar perfil") {
-            isEditable = true
-            deactiveUserProfile()
         }
 
 
+
+        iv_edit_name.setOnClickListener {
+            editText_name.isActivated = true
+            editText_name.isEnabled = true
+            editText_name.selectAll()
+        }
+        iv_edit_bio.setOnClickListener {
+            editText_bio.isActivated = true
+            editText_bio.isEnabled = true
+            editText_bio.selectAll()
+        }
+
+
+    }
+
+    private fun clearEditText() {
+        iv_edit_name.text.text = ""
+        iv_edit_bio.text.text = ""
+    }
+
+    private fun delayGoToMain() {
+        object : CountDownTimer(2000, 2000){
+            override fun onTick(millisUntilFinished: Long) {
+            }
+            override fun onFinish() {
+                fromMyAccount = true
+                startActivity<MainActivity>()
+            }
+        }.start()
     }
 
 
@@ -112,7 +128,9 @@ class MyAccountActivity : AppCompatActivity() {
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 for (document in task.result) {
-                    nameUsers.add(User(document.getString("name")!!, "", "", mutableListOf(), "", false, document.getString("uidUser")!!))
+                    nameUsers.add(User(document.getString("name")!!, "",
+                            "", mutableListOf(), "", false,
+                            document.getString("uidUser")!!))
 
                 }
             }
@@ -131,7 +149,6 @@ class MyAccountActivity : AppCompatActivity() {
                 val uid = nameUsers[i].uidUser
                 if (name == currentUser && uid != currentUserUid) {
                     alertRepeat = true
-                    activeUserProfile()
                     alertChangeName()
                 }
             }
@@ -180,17 +197,6 @@ class MyAccountActivity : AppCompatActivity() {
         }
     }
 
-    private fun deactiveUserProfile() {
-        editText_name.isEnabled = false
-        editText_bio.isEnabled = false
-        imageView_profile_picture.isEnabled = false
-    }
-
-    private fun activeUserProfile() {
-        editText_name.isEnabled = true
-        editText_bio.isEnabled = true
-        imageView_profile_picture.isEnabled = true
-    }
 
     private fun initView() {
         XatUtil.getCurrentUser { user ->
@@ -202,11 +208,6 @@ class MyAccountActivity : AppCompatActivity() {
                         .placeholder(R.drawable.ic_account_circle_black_24dp)
                         .into(imageView_profile_picture)
 
-            } else {
-                if (!pictureJustChanged || user.profilePicturePath == null)
-                    if (!nameRepeat || !alertRepeat) {
-                        longSnackbar(constraint_layout_fragment_my_acount, getString(R.string.photo_user_message))
-                    }
             }
         }
     }

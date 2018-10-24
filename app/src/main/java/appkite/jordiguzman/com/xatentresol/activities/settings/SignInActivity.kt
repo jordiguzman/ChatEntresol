@@ -9,8 +9,6 @@ import android.os.CountDownTimer
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
 import appkite.jordiguzman.com.xatentresol.service.MyFirebaseInstanceIDService
@@ -34,8 +32,7 @@ private const val URL = "https://xatentresol-146fe.firebaseapp.com/"
 class SignInActivity : AppCompatActivity() {
 
     private val rcSigning = 1
-    private var visible: Boolean? = false
-    private var legal: Boolean? = false
+    private var alertCorrectEmailVisible: Boolean? = false
     companion object {
         var firstTime: Boolean? = true
     }
@@ -52,92 +49,63 @@ class SignInActivity : AppCompatActivity() {
 
 
         readShared()
-        readSharedLegal()
 
 
-        if (!legal!!){
-            avisoLegal()
-        }else{
-            initSignIn()
-        }
+        initSignIn()
+
 
     }
 
-    private fun countDownTimer() {
-        object : CountDownTimer(3000, 3000) {
-            override fun onTick(millisUntilFinished: Long) {
 
+    private fun countDownTimerEmailNotice(){
+        object : CountDownTimer(2000, 2000){
+            override fun onTick(millisUntilFinished: Long) {
             }
             override fun onFinish() {
-                alertDialog()
+                if (!firstTime!!)alertCorrectEmailVisible = true
+               alertDialog()
             }
         }.start()
     }
 
     private fun initSignIn() {
         if (!firstTime!!) longSnackbar(constraint_layout_signin, R.string.verifica_correo)
-        if (!visible!!) countDownTimer()
+        if (!alertCorrectEmailVisible!!) {
+            alertDialog()
+        }else{
+            countDownTimerEmailNotice()
+        }
         account_sign_in.setOnClickListener {
             val intent = AuthUI.getInstance().createSignInIntentBuilder()
                     .setAvailableProviders(signInProviders)
                     .setLogo(R.drawable.ic_logo)
+                    .setTosAndPrivacyPolicyUrls(
+                            URL,
+                            URL)
+                    .setTheme(R.style.AppTheme)
                     .build()
             startActivityForResult(intent, rcSigning)
         }
     }
 
-    private fun avisoLegal() {
-        val alert = AlertDialog.Builder(this)
-        alert.setTitle(getString(R.string.aviso_legal))
-        alert.setIcon(R.drawable.ic_logo)
 
-        val wv = WebView(this)
-        wv.loadUrl(URL)
-        wv.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                return true
-            }
-        }
-        alert.setView(wv)
-        alert.setPositiveButton(getString(R.string.aceptar)){ dialog, _ ->
-            dialog.dismiss()
-            legal = true
-            sharedLegal()
-            initSignIn()
-        }
-        alert.setNegativeButton(getString(R.string.rechazar)) { dialog, _ ->
-            dialog.dismiss()
-            longSnackbar(constraint_layout_signin, getString(R.string.aviso_rechazo_legal))}
-        alert.show()
 
-    }
 
-    private fun readSharedLegal() {
-        val sharedPreferences: SharedPreferences = this.getSharedPreferences("legal", android.content.Context.MODE_PRIVATE)
-        legal = sharedPreferences.getBoolean("accepted", false)
-    }
-
-    private fun sharedLegal(){
-        val sharedPreferences: SharedPreferences = this.getSharedPreferences("legal", android.content.Context.MODE_PRIVATE)
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putBoolean("accepted", legal!!)
-        editor.apply()
-    }
 
     private fun readShared() {
         val sharedPreferences: SharedPreferences = this.getSharedPreferences("view", android.content.Context.MODE_PRIVATE)
-        visible = sharedPreferences.getBoolean("visible", false)
+        alertCorrectEmailVisible = sharedPreferences.getBoolean("alertCorrectEmailVisible", false)
     }
     private fun shared() {
         val sharedPreferences: SharedPreferences = this.getSharedPreferences("view", android.content.Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.putBoolean("visible", visible!!)
+        editor.putBoolean("alertCorrectEmailVisible", alertCorrectEmailVisible!!)
         editor.apply()
     }
 
     @SuppressLint("InflateParams")
     private fun alertDialog() {
+        if (alertCorrectEmailVisible!!)return
         val dialog = LayoutInflater.from(this).inflate(R.layout.custom_dialog_notice, null)
         val builder = android.support.v7.app.AlertDialog.Builder(this)
                 .setView(dialog)
@@ -145,13 +113,8 @@ class SignInActivity : AppCompatActivity() {
         alertDialog.show()
         dialog.btn_ok.setOnClickListener {
             if (dialog.checkBox_notice.isChecked) {
-                visible = true
+                alertCorrectEmailVisible = true
                 shared()
-                if (!firstTime!!){
-                    longSnackbar(constraint_layout_signin, R.string.verifica_correo)
-
-                }
-
             }
             alertDialog.dismiss()
         }

@@ -19,8 +19,12 @@ import appkite.jordiguzman.com.xatentresol.activities.users.UsersBannedActivity
 import appkite.jordiguzman.com.xatentresol.adapter.SettingsAdapter
 import appkite.jordiguzman.com.xatentresol.model.ItemSettings
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
+import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.newTask
+import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -33,7 +37,8 @@ class SettingsFragment : Fragment() {
             R.drawable.ic_vpn_key_black_24dp,
             R.drawable.ic_notifications,
             R.drawable.ic_info,
-            R.drawable.ic_person)
+            R.drawable.ic_person,
+            R.drawable.ic_close_black_24dp)
 
 
 
@@ -57,7 +62,8 @@ class SettingsFragment : Fragment() {
                     2 -> toMyAccount()
                     3 -> pushNotification()
                     4 -> toLegal()
-                    5 -> showUsers()
+                    5 -> reportUser()
+                    6 -> closeSession()
 
 
                 }
@@ -66,11 +72,20 @@ class SettingsFragment : Fragment() {
         return view
     }
 
+    private fun closeSession() {
+        AuthUI.getInstance()
+                .signOut(context!!)
+                .addOnCompleteListener {
+                    SignInActivity.firstTime = true
+                    startActivity(intentFor<SignInActivity>().newTask().clearTask())
+                }
+    }
+
     private fun toLegal() {
         startActivity<LegalActivity>()
     }
 
-    private fun showUsers() {
+    private fun reportUser() {
 
         startActivity<UsersBannedActivity>()
 

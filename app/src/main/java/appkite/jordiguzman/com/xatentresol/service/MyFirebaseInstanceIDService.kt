@@ -2,7 +2,6 @@
 
 package appkite.jordiguzman.com.xatentresol.service
 
-import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
@@ -24,7 +23,7 @@ class MyFirebaseInstanceIDService: FirebaseInstanceIdService() {
         fun addTokenXat(newRegistrationToken: String?){
             if (newRegistrationToken == null) throw NullPointerException("FCM token is null")
 
-            if (NotificationsSettingsActivity.noNotifications)return
+            //if (NotificationsSettingsActivity.noNotifications)return
             XatUtil.getFCMRegistrtionTokens { tokens ->
                 if (tokens.contains(newRegistrationToken))
                     return@getFCMRegistrtionTokens

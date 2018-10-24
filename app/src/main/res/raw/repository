@@ -1,3 +1,49 @@
  val uri : Uri = mImageUri!!
  //val ins : InputStream? = contentResolver?.openInputStream(uri)
  //ins!!.close()
+
+
+ private fun avisoLegal() {
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle(getString(R.string.aviso_legal))
+        alert.setIcon(R.drawable.ic_logo)
+
+        val wv = WebView(this)
+        wv.loadUrl(URL)
+        wv.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                view.loadUrl(url)
+                return true
+            }
+        }
+        alert.setView(wv)
+        alert.setPositiveButton(getString(R.string.aceptar)){ dialog, _ ->
+            dialog.dismiss()
+            legal = true
+            sharedLegal()
+            initSignIn()
+        }
+        alert.setNegativeButton(getString(R.string.rechazar)) { dialog, _ ->
+            dialog.dismiss()
+            longSnackbar(constraint_layout_signin, getString(R.string.aviso_rechazo_legal))}
+        alert.show()
+
+    }
+
+
+    /*@SuppressLint("PrivateResource")
+        private fun addBadge(position: Int){
+            val bottomMenu = navigation.getChildAt(0) as? BottomNavigationMenuView
+            val v = bottomMenu?.getChildAt(position) as? BottomNavigationItemView
+
+            val badge = LayoutInflater.from(this)
+                    .inflate(R.layout.badge_layout, bottomMenu, false)
+
+            val badgeLayout: FrameLayout.LayoutParams = FrameLayout.LayoutParams(badge?.layoutParams).apply {
+                gravity = Gravity.CENTER_HORIZONTAL
+                topMargin = resources.getDimension(R.dimen.design_bottom_navigation_margin).toInt()
+                leftMargin = resources.getDimension(R.dimen.bagde_left_margin).toInt()
+
+            }
+            v?.addView(badge, badgeLayout)
+        }*/
