@@ -51,7 +51,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
                 cardViewClicked = false
                 return@setOnClickListener
             }
-            updateBannedUser(position)
+
             alertDialog(holder, position)
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.secondary_text))
 
@@ -74,7 +74,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
 
     }
 
-    //TODO hacer el alert dialog para borra el usuario con au llamada a XatUtil
+    //TODO hacer el alert dialog para borra el usuario con su llamada a XatUtil
     @SuppressLint("InflateParams")
     private fun alertDialogDelete() {
         val dialog = LayoutInflater.from(context).inflate(R.layout.custom_dialog_banned_users, null)

@@ -29,11 +29,6 @@ class UsersBannedActivity : AppCompatActivity() {
 
         getCurrentUserName()
 
-
-        //TODO aqui se produce el error de cambio de nombre de usuario MUY IMPORTANTE!!!
-
-
-
     }
 
     private fun sendMessage() {
@@ -68,7 +63,7 @@ class UsersBannedActivity : AppCompatActivity() {
         val userRef = db.collection(pathUser)
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful){
-                for (document in task.result){
+                for (document in task.result!!){
                     val name = document.getString("name")
                     val profilePicturePath = document.getString("profilePicturePath")
                     val email = document.getString("emailUser")

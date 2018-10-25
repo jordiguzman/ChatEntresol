@@ -32,6 +32,7 @@ class PeopleFragment : Fragment() {
 
     companion object {
         var personIdBanned: String? = null
+        var pathUser = ""
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -74,11 +75,15 @@ class PeopleFragment : Fragment() {
 
     }
     private val onItemClick = OnItemClickListener { item, _ ->
+
         if (item is PersonItem) {
+            pathUser = item.person.profilePicturePath!!
             startActivity<ChatActivity>(
                     AppConstants.USER_NAME to item.person.name,
                     AppConstants.USER_ID to item.userId,
                     AppConstants.USER_PATH_PHOTO to item.person.profilePicturePath!!
+
+
 
 
 

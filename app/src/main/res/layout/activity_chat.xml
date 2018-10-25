@@ -41,6 +41,8 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@string/app_logo_alt"
                     android:src="@drawable/logo_blanco"
+                    app:civ_border_color="@android:color/white"
+                    app:civ_border_width="2dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tv_user_main_activity"
                     app:layout_constraintHorizontal_bias="0.0"

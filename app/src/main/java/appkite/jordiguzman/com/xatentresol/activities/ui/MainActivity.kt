@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.startActivity
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -142,9 +143,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun closeApp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            finishAndRemoveTask()
+            moveTaskToBack(true)
+            exitProcess(-1)
+
         }else{
-            finish()
+            moveTaskToBack(true)
+            exitProcess(-1)
+            //or finish()
         }
 
     }

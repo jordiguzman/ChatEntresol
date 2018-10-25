@@ -18,9 +18,11 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import appkite.jordiguzman.com.xatentresol.R
+import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
+import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
+import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.ImageMessage
 import appkite.jordiguzman.com.xatentresol.model.TextMessage
 import appkite.jordiguzman.com.xatentresol.model.User
@@ -38,9 +40,14 @@ import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.dialog_camera_galley.view.*
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.startActivity
 import java.io.ByteArrayOutputStream
 import java.util.*
 
+private const val RC_IMAGE_GALLERY = 2
+private const val RC_IMAGE_CAMERA = 1
+private const val RP_GALLERY = 22
+private const val RP_CAMERA = 11
 
 class ChatActivity : AppCompatActivity() {
 
@@ -52,22 +59,19 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messagesSection: Section
     private val firebaseMessage = FirebaseMessaging.getInstance()
     private var mImageUri: Uri? = null
-    private  val RC_IMAGE_GALLERY = 2
-    private val RC_IMAGE_CAMERA = 1
-    private val RP_GALLERY = 22
-    private val RP_CAMERA = 11
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        if (!XatUtil.isNetworkAvailable(this)){
+        if (!XatUtil.isNetworkAvailable(this)) {
             longSnackbar(constraint_chat, getString(R.string.no_network)).show()
             return
         }
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mImageUri = savedInstanceState.getParcelable("uriImage")
         }
 
@@ -77,6 +81,10 @@ class ChatActivity : AppCompatActivity() {
 
         XatUtil.getCurrentUser {
             currentUser = it
+            GlideApp.with(this)
+                    .load(StorageUtil.pathToReference(PeopleFragment.pathUser))
+                    .placeholder(R.drawable.ic_person_white)
+                    .into(iv_chat_user)
         }
 
         otherUserId = intent.getStringExtra(AppConstants.USER_ID)
@@ -88,7 +96,7 @@ class ChatActivity : AppCompatActivity() {
                     XatUtil.addChatMessagesListener(channelId, this, this::updateRecyclerView)
 
             imageView_send.setOnClickListener {
-                if (editText_message.text.isEmpty())return@setOnClickListener
+                if (editText_message.text.isEmpty()) return@setOnClickListener
 
 
                 val messageToSend =
@@ -100,14 +108,14 @@ class ChatActivity : AppCompatActivity() {
 
             }
             fab_send_image.setOnClickListener {
-                alertDialog()
+                alertDialogCameraGallery()
 
             }
         }
     }
 
     @SuppressLint("InflateParams")
-    private fun alertDialog(){
+    private fun alertDialogCameraGallery() {
         val dialog = LayoutInflater.from(this).inflate(R.layout.dialog_camera_galley, null)
         val builder = AlertDialog.Builder(this)
                 .setView(dialog)
@@ -115,11 +123,11 @@ class ChatActivity : AppCompatActivity() {
         alertDialog.show()
 
         dialog.btn_camera.setOnClickListener {
-            cameraIntent()
+           checkPermissionToAppCamera()
             alertDialog.dismiss()
         }
         dialog.btn_galeria.setOnClickListener {
-            checkPermissionToApp()
+            checkPermissionToAppStorage()
             alertDialog.dismiss()
         }
     }
@@ -132,22 +140,23 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun cameraIntent() {
-         val filename = "" + System.currentTimeMillis() + ".jpg"
+        val filename = "" + System.currentTimeMillis() + ".jpg"
         val values = ContentValues()
         values.put(MediaStore.MediaColumns.TITLE, filename)
         values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-
         mImageUri = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         val intent = Intent()
         intent.action = MediaStore.ACTION_IMAGE_CAPTURE
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
         startActivityForResult(intent, RC_IMAGE_CAMERA)
+
+
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_IMAGE_GALLERY && resultCode == Activity.RESULT_OK &&
-                data != null && data.data != null){
+                data != null && data.data != null) {
             val selectedImagePath = data.data
 
 
@@ -157,22 +166,21 @@ class ChatActivity : AppCompatActivity() {
             selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             val selectedImageBytes = outputStream.toByteArray()
 
-            StorageUtil.uploadMessageImage(selectedImageBytes){ imagePath ->
+            StorageUtil.uploadMessageImage(selectedImageBytes) { imagePath ->
                 val messageToSend =
-                        ImageMessage(imagePath,  Calendar.getInstance().time,
+                        ImageMessage(imagePath, Calendar.getInstance().time,
                                 FirebaseAuth.getInstance().currentUser!!.uid,
                                 otherUserId, currentUser.name)
                 XatUtil.sendMessage(messageToSend, currentChannelId)
 
             }
 
-        }else if (requestCode == RC_IMAGE_CAMERA && resultCode == Activity.RESULT_OK)  {
+        } else if (requestCode == RC_IMAGE_CAMERA && resultCode == Activity.RESULT_OK) {
 
             if (mImageUri == null) {
-                Log.d("Camera", "URI is null")
                 return
             }
-            val img : Bitmap? = ImageUtils.handleSamplingAndRotationBitmap(this, mImageUri!!)
+            val img: Bitmap? = ImageUtils.handleSamplingAndRotationBitmap(this, mImageUri!!)
             val outputStream = ByteArrayOutputStream()
             img!!.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             val selectedImageBytes = outputStream.toByteArray()
@@ -209,40 +217,61 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    private fun checkPermissionToApp( ) {
+
+
+    private fun checkPermissionToAppStorage() {
 
         val permissionWrite = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
         val permissionRead = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
 
-        if (permissionWrite != PackageManager.PERMISSION_GRANTED && permissionRead != PackageManager.PERMISSION_GRANTED){
-            makeRequest()
-        }else{
+        if (permissionWrite != PackageManager.PERMISSION_GRANTED && permissionRead != PackageManager.PERMISSION_GRANTED) {
+            makeRequestStorage()
+        } else {
             fromGallery()
         }
 
     }
 
-    private fun makeRequest() {
-         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                 RP_GALLERY)
+
+    private fun checkPermissionToAppCamera() {
+
+        val permissionCamera = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            makeRequestCamera()
+        } else {
+            cameraIntent()
+        }
+    }
+
+    private fun makeRequestStorage() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                RP_GALLERY)
+    }
+
+    private fun makeRequestCamera() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                RP_CAMERA)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             RP_GALLERY -> {
-
-                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
-
-                } else {
+                if (!grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     fromGallery()
+                }
+            }
+            RP_CAMERA -> {
+                if (!grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                         grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    cameraIntent()
                 }
             }
         }
     }
-
 
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
@@ -255,10 +284,15 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mImageUri = savedInstanceState.getParcelable("uriImage")
         }
 
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity<MainActivity>()
     }
 
 }

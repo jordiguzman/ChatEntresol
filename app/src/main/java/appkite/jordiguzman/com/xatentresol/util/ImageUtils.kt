@@ -80,7 +80,7 @@ object ImageUtils {
         ei = if (Build.VERSION.SDK_INT > 23)
             ExifInterface(input)
         else
-            ExifInterface(selectedImage.path)
+            ExifInterface(selectedImage.encodedPath)
 
         val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
