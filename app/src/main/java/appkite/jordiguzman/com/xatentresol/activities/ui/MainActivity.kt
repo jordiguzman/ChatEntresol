@@ -37,8 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar_main)
         if (!XatUtil.isNetworkAvailable(this)){
-            longSnackbar(constraint_layout_main, getString(R.string.no_network)).show()
-            return
+            startActivity<NoNetworkActivity>()
         }
 
 
@@ -143,13 +142,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun closeApp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            finishAndRemoveTask()
             moveTaskToBack(true)
             exitProcess(-1)
-
         }else{
+            finish()
             moveTaskToBack(true)
             exitProcess(-1)
-            //or finish()
         }
 
     }

@@ -70,6 +70,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         emailUserBanned = userBanned[position].emailUser
         userBanned[position].isBanned = true
         isBannedUser = userBanned[position].isBanned
+        //TODO Mal lo de abajo
         XatUtil.updateCurrentUser(reportEmailBody, bio, profilePicturePath, true)
 
     }
@@ -93,9 +94,8 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         return AdapterUserBannedViewHolder(v)
     }
 
-    override fun getItemCount(): Int {
-       return userBanned.size
-    }
+    override fun getItemCount() = userBanned.size
+
     @SuppressLint("InflateParams")
     private fun alertDialog(holder: AdapterUserBannedViewHolder, position: Int){
         val dialog = LayoutInflater.from(context).inflate(R.layout.custom_dialog_banned_users, null)
@@ -110,10 +110,15 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
             cardViewClicked = false
             comment = dialog.et_user_report.text.toString()
-            sendMessageToAdmin()
-            sendMessageToUserBanned()
-            updateBannedUser(position)
-            alertDialog.dismiss()
+            if (!userBanned[holder.adapterPosition].isBanned){
+                sendMessageToAdmin()
+                sendMessageToUserBanned()
+                updateBannedUser(position)
+                alertDialog.dismiss()
+            }else{
+
+            }
+
 
 
         }

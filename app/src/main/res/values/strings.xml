@@ -72,6 +72,12 @@
     <string name="editar_nombre_usuario">Editar nombre usuario</string>
     <string name="editar_bio_usuario">Editar bio usuario</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="sin_conexion">Sin conexión</string>
+    <string name="intentalo_de_nuevo">Intentalo de nuevo</string>
+    <string name="info_app">Información de la app</string>
+    <string name="quieres_cambiar_tu_contrase_a">¿Quieres cambiar tu contraseña?</string>
+    <string name="xatentres_l_v_1_0">XatEntresòl v.1.0</string>
+    <string name="link">© Kick in the Eye 2018</string>
 
     <string-array name="list_settings">
         <item>@string/delete_user</item>
@@ -81,6 +87,7 @@
         <item>@string/legal_info</item>
         <item>@string/all_users</item>
         <item>@string/cerrar_sesion</item>
+        <item>@string/info_app</item>
     </string-array>
 
     <string-array name="list_notifications">

@@ -15,6 +15,7 @@ import appkite.jordiguzman.com.xatentresol.activities.settings.ChangePasswordAct
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.NotificationsSettingsActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.ui.InfoAppActivity
 import appkite.jordiguzman.com.xatentresol.activities.users.UsersBannedActivity
 import appkite.jordiguzman.com.xatentresol.adapter.SettingsAdapter
 import appkite.jordiguzman.com.xatentresol.model.ItemSettings
@@ -38,7 +39,8 @@ class SettingsFragment : Fragment() {
             R.drawable.ic_notifications,
             R.drawable.ic_info,
             R.drawable.ic_person,
-            R.drawable.ic_close_black_24dp)
+            R.drawable.ic_close_black_24dp,
+            R.drawable.ic_info_outline_black_24dp)
 
 
 
@@ -64,12 +66,17 @@ class SettingsFragment : Fragment() {
                     4 -> toLegal()
                     5 -> reportUser()
                     6 -> closeSession()
+                    7 -> infoApp()
 
 
                 }
             }
         }
         return view
+    }
+
+    private fun infoApp() {
+        startActivity<InfoAppActivity>()
     }
 
     private fun closeSession() {

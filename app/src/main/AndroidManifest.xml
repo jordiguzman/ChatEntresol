@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="false"
@@ -125,9 +125,12 @@
         <activity
             android:name=".activities.chat.GroupChatActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".activities.settings.DialogNotificationsAudioActivity"
-            android:theme="@style/AppThemeAppBar"
-            android:parentActivityName=".activities.settings.NotificationsSettingsActivity"/>
+        <activity
+            android:name=".activities.settings.DialogNotificationsAudioActivity"
+            android:parentActivityName=".activities.settings.NotificationsSettingsActivity"
+            android:theme="@style/AppThemeAppBar" />
+        <activity android:name=".activities.ui.NoNetworkActivity" />
+        <activity android:name=".activities.ui.InfoAppActivity"></activity>
     </application>
 
 </manifest>

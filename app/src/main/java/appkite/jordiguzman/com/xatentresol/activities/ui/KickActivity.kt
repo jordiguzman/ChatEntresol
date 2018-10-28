@@ -35,7 +35,7 @@ class KickActivity : AppCompatActivity() {
 
     }
 
-    fun hideNavigation() {
+    private fun hideNavigation() {
         val decorView = window.decorView
 
         decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE

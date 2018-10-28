@@ -32,7 +32,7 @@ class PeopleFragment : Fragment() {
 
     companion object {
         var personIdBanned: String? = null
-        var pathUser = ""
+        var pathUser: String? = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

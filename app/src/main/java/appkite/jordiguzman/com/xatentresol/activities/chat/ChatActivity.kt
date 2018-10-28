@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.ui.MainActivity
@@ -39,7 +40,6 @@ import com.xwray.groupie.ViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.dialog_camera_galley.view.*
-import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.startActivity
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -66,10 +66,7 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        if (!XatUtil.isNetworkAvailable(this)) {
-            longSnackbar(constraint_chat, getString(R.string.no_network)).show()
-            return
-        }
+
 
         if (savedInstanceState != null) {
             mImageUri = savedInstanceState.getParcelable("uriImage")
@@ -81,10 +78,15 @@ class ChatActivity : AppCompatActivity() {
 
         XatUtil.getCurrentUser {
             currentUser = it
-            GlideApp.with(this)
-                    .load(StorageUtil.pathToReference(PeopleFragment.pathUser))
-                    .placeholder(R.drawable.ic_person_white)
-                    .into(iv_chat_user)
+            if (PeopleFragment.pathUser != null){
+                GlideApp.with(this)
+                        .load(StorageUtil.pathToReference(PeopleFragment.pathUser!!))
+                        .placeholder(R.drawable.ic_person_white)
+                        .into(iv_chat_user)
+            }else{
+                iv_chat_user.background = ContextCompat.getDrawable(this, R.drawable.ic_person_white)
+            }
+
         }
 
         otherUserId = intent.getStringExtra(AppConstants.USER_ID)
@@ -140,6 +142,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun cameraIntent() {
+
         val filename = "" + System.currentTimeMillis() + ".jpg"
         val values = ContentValues()
         values.put(MediaStore.MediaColumns.TITLE, filename)
@@ -148,6 +151,7 @@ class ChatActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = MediaStore.ACTION_IMAGE_CAPTURE
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri)
+        Log.d("imageUri", mImageUri.toString())
         startActivityForResult(intent, RC_IMAGE_CAMERA)
 
 
@@ -180,6 +184,7 @@ class ChatActivity : AppCompatActivity() {
             if (mImageUri == null) {
                 return
             }
+
             val img: Bitmap? = ImageUtils.handleSamplingAndRotationBitmap(this, mImageUri!!)
             val outputStream = ByteArrayOutputStream()
             img!!.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
@@ -242,6 +247,7 @@ class ChatActivity : AppCompatActivity() {
 
         if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
             makeRequestCamera()
+            Log.d("Entro", "makeRequest")
         } else {
             cameraIntent()
         }
@@ -265,6 +271,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
             RP_CAMERA -> {
+                Log.d("Entro", "result")
                 if (!grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                          grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     cameraIntent()

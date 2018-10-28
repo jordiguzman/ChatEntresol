@@ -72,15 +72,19 @@ object ImageUtils {
         return inSampleSize
     }
 
+
+
     @Throws(IOException::class)
     private fun rotateImageIfRequired(context: Context, img: Bitmap, selectedImage: Uri): Bitmap {
 
         val input = context.contentResolver.openInputStream(selectedImage)
         val ei: ExifInterface
-        ei = if (Build.VERSION.SDK_INT > 23)
+        ei = if (Build.VERSION.SDK_INT > 21)
             ExifInterface(input)
         else
+            //TODO Aqui falla
             ExifInterface(selectedImage.encodedPath)
+
 
         val orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
 
