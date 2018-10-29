@@ -17,12 +17,16 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 
-object XatUtil   {
+object XatUtil {
 
     private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     private val currentUserDocRef: DocumentReference
         get() = chatInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
+                ?: throw NullPointerException("UID is null.")}")
+
+    private val userDocRef: DocumentReference
+        get() = chatInstance.document("users/${FirebaseAuth.getInstance().uid
                 ?: throw NullPointerException("UID is null.")}")
 
     private var mAuth: FirebaseAuth? = null
@@ -32,27 +36,28 @@ object XatUtil   {
     /**
      * *************   Email ********************
      */
-    fun sendEmailVerification(context: Context){
+    fun sendEmailVerification(context: Context) {
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
         user!!.sendEmailVerification()
-                .addOnCompleteListener {task ->
-                    if (task.isSuccessful){
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
                         //Toast.makeText(context, "Verification email sent to " + user.email!!, Toast.LENGTH_SHORT).show()
 
-                    }else{
+                    } else {
                         Toast.makeText(context, "Failed to send verification email.", Toast.LENGTH_SHORT).show()
                     }
                 }
     }
-    fun verifiedUserEmail(): Boolean{
+
+    fun verifiedUserEmail(): Boolean {
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth!!.currentUser
-        if (!user!!.isEmailVerified){
+        if (!user!!.isEmailVerified) {
 
             return false
         }
-        return  true
+        return true
     }
 
     /**
@@ -65,9 +70,9 @@ object XatUtil   {
         currentUserDocRef.get().addOnSuccessListener { documentSnapshot ->
             if (!documentSnapshot.exists()) {
                 val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
-                        "", null,  mutableListOf(),
+                        "", null, mutableListOf(),
                         FirebaseAuth.getInstance().currentUser?.email.toString()
-                        ,false, FirebaseAuth.getInstance().currentUser?.uid!!)
+                        , false, FirebaseAuth.getInstance().currentUser?.uid!!)
                 currentUserDocRef.set(newUser).addOnSuccessListener {
                     onComplete()
                 }
@@ -77,33 +82,30 @@ object XatUtil   {
     }
 
 
-    fun deleteCurrentUser(){
+    fun deleteCurrentUser() {
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
-         db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
-                 .delete()
+        db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .delete()
         db.collection("chatChannels").document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .delete()
         chatChannelsCollectionRef.document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .delete()
 
 
-        //TODO inform to admin with uid from deleted user. And make method to delete user banned.
+        //TODO delete all files of deleted user
 
         val auth = FirebaseAuth.getInstance().currentUser
         auth?.delete()
         currentUserDocRef.delete()
     }
 
-    fun deleteBannedUser(){
-
-    }
 
     fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null, isBanned: Boolean = false) {
         val userFieldMap = mutableMapOf<String, Any>()
         if (name.isNotBlank()) userFieldMap["name"] = name
         if (bio.isNotBlank()) userFieldMap["bio"] = bio
-        if (!isBanned)userFieldMap["banned"] = isBanned
-        if (profilePicturePath != null){
+        if (!isBanned) userFieldMap["banned"] = isBanned
+        if (profilePicturePath != null) {
             userFieldMap["profilePicturePath"] = profilePicturePath
         }
 
@@ -111,17 +113,30 @@ object XatUtil   {
     }
 
     fun getCurrentUser(onComplete: (User) -> Unit) {
-         try {
-             currentUserDocRef.get()
-                     .addOnSuccessListener {
-                         onComplete(it.toObject(User::class.java)!!)
-                     }
-         }catch (e: Exception){
-             Log.d("Error", e.message)
+        try {
+            currentUserDocRef.get()
+                    .addOnSuccessListener {
+                        onComplete(it.toObject(User::class.java)!!)
+                    }
+        } catch (e: Exception) {
+            Log.d("Error", e.message)
 
-         }
+        }
     }
 
+    //TODO coge el nombre del current y no queremos eso
+    fun updateUserBanned(onComplete: (User) -> Unit) {
+        try {
+            userDocRef.get()
+                    .addOnSuccessListener {
+                        onComplete(it.toObject(User::class.java)!!)
+                    }
+        }catch (e: Exception){
+            Log.d("Error", e.message)
+        }
+
+
+    }
 
 
     /**
@@ -169,17 +184,18 @@ object XatUtil   {
                     onListen(items)
                 }
     }
+
     fun addChatMessagesGroupListener(channelId: String, context: Context,
-                                     onListen: (List<Item>) -> Unit): ListenerRegistration{
+                                     onListen: (List<Item>) -> Unit): ListenerRegistration {
         return chatChannelsGroupCollectionRef.document(channelId).collection("groupMessages")
                 .orderBy("time")
-                .addSnapshotListener{ querySnapshot, firebaseFirestoreException ->
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (firebaseFirestoreException != null) {
                         Log.e("XatEntresol", "ChatMessagesListener error.", firebaseFirestoreException)
                         return@addSnapshotListener
                     }
                     val items = mutableListOf<Item>()
-                    querySnapshot!!.documents.forEach{
+                    querySnapshot!!.documents.forEach {
                         if (it["type"] == MessageType.TEXT)
                             items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!, context))
                         else
@@ -226,7 +242,7 @@ object XatUtil   {
     }
 
     fun getOrCreateChatChannelGroup(otherUserId: String,
-                                    onComplete: (channelId: String) -> Unit){
+                                    onComplete: (channelId: String) -> Unit) {
         currentUserDocRef.collection("groupChatChannels")
                 .document(otherUserId).get().addOnSuccessListener {
                     if (it.exists()) {
@@ -257,31 +273,29 @@ object XatUtil   {
      * *********** SEND ************************
      */
 
-    fun sendMessage(message: Message, channelId: String){
+    fun sendMessage(message: Message, channelId: String) {
         chatChannelsCollectionRef.document(channelId)
                 .collection("messages")
                 .add(message)
 
     }
-    fun sendMessageGroup(message: Message, channelId: String){
+
+    fun sendMessageGroup(message: Message, channelId: String) {
         chatChannelsGroupCollectionRef.document(channelId)
                 .collection("groupMessages")
                 .add(message)
     }
 
 
-
-
-
     //Region FCM
-    fun getFCMRegistrtionTokens(onComplete: (tokens: MutableList<String>) -> Unit){
+    fun getFCMRegistrtionTokens(onComplete: (tokens: MutableList<String>) -> Unit) {
         currentUserDocRef.get().addOnSuccessListener {
-            val user= it.toObject(User::class.java)!!
+            val user = it.toObject(User::class.java)!!
             onComplete(user.registrationTokens)
         }
     }
 
-    fun setFCMRegistrtionTokens(registrationTokens: MutableList<String>){
+    fun setFCMRegistrtionTokens(registrationTokens: MutableList<String>) {
         currentUserDocRef.update(mapOf("registrationTokens" to registrationTokens))
     }
     //endRegion FCM
