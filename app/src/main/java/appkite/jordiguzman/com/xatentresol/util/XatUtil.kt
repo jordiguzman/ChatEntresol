@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
+import appkite.jordiguzman.com.xatentresol.adapter.UserBannedAdapter
 import appkite.jordiguzman.com.xatentresol.model.*
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.ImageMessageItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
@@ -17,6 +18,8 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 
+
+
 object XatUtil {
 
     private val chatInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
@@ -25,9 +28,7 @@ object XatUtil {
         get() = chatInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
                 ?: throw NullPointerException("UID is null.")}")
 
-    private val userDocRef: DocumentReference
-        get() = chatInstance.document("users/${FirebaseAuth.getInstance().uid
-                ?: throw NullPointerException("UID is null.")}")
+
 
     private var mAuth: FirebaseAuth? = null
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
@@ -124,18 +125,37 @@ object XatUtil {
         }
     }
 
-    //TODO coge el nombre del current y no queremos eso
-    fun updateUserBanned(onComplete: (User) -> Unit) {
-        try {
-            userDocRef.get()
-                    .addOnSuccessListener {
-                        onComplete(it.toObject(User::class.java)!!)
+
+    fun getUserBanned() {
+        val pathUser = "users"
+        var uidUser: String?
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection(pathUser)
+        userRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                for (document in task.result!!){
+                    uidUser = document.getString("uidUser")!!
+                    val email = document.getString("emailUser")
+                    if (UserBannedAdapter.userBannedEmail == email){
+                        updateBannerUser(db, pathUser, uidUser)
                     }
-        }catch (e: Exception){
-            Log.d("Error", e.message)
+                }
+            }
         }
+    }
 
+    private fun updateBannerUser(db: FirebaseFirestore, pathUser: String, uidUser: String?) {
+        val userBannedRef = db.collection(pathUser).document(uidUser!!)
+        userBannedRef.update("banned", true)
+                .addOnSuccessListener {
+                    Log.d("UIDSuccess", "")
 
+                }.addOnFailureListener {
+                    Log.d("UIDFailure", "")
+                }
+    }
+    fun deleteUserBanned(){
+        Log.d("UserDeleted", "")
     }
 
 

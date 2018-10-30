@@ -108,10 +108,15 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
             //sendMessageToAdmin()
             //sendMessageToUserBanned()
             userBannedEmail = userBanned[position].emailUser
-            XatUtil.updateUserBanned{User ->
-                val bannedUser = User.name
-                Log.d("NameBanned", bannedUser)
+            val isUserBanned = userBanned[position].isBanned
+            Log.d("UserDeleted", isUserBanned.toString())
+            if (isUserBanned){
+                XatUtil.deleteUserBanned()
+            }else{
+                XatUtil.getUserBanned()
             }
+
+
             alertDialog.dismiss()
         }
         dialog.btn_close.setOnClickListener {
