@@ -79,6 +79,7 @@
     <string name="xatentres_l_v_1_0">XatEntresòl v.1.0</string>
     <string name="link">© Kick in the Eye 2018</string>
 
+
     <string-array name="list_settings">
         <item>@string/delete_user</item>
         <item>@string/reset_password</item>

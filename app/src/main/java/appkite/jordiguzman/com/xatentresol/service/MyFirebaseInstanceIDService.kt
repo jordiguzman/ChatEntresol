@@ -24,12 +24,12 @@ class MyFirebaseInstanceIDService: FirebaseInstanceIdService() {
             if (newRegistrationToken == null) throw NullPointerException("FCM token is null")
 
             //if (NotificationsSettingsActivity.noNotifications)return
-            XatUtil.getFCMRegistrtionTokens { tokens ->
+            XatUtil.getFCMRegistrationTokens { tokens ->
                 if (tokens.contains(newRegistrationToken))
-                    return@getFCMRegistrtionTokens
+                    return@getFCMRegistrationTokens
 
                 tokens.add(newRegistrationToken)
-                XatUtil.setFCMRegistrtionTokens(tokens)
+                XatUtil.setFCMRegistrationTokens(tokens)
             }
         }
     }

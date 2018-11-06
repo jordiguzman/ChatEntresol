@@ -1,5 +1,6 @@
 package appkite.jordiguzman.com.xatentresol.util
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -27,6 +28,8 @@ object StorageUtil {
         val ref = currentUserRef.child("profilePictures/${UUID.nameUUIDFromBytes(imageBytes)}")
         ref.putBytes(imageBytes)
                 .addOnSuccessListener {
+
+                    //TODO guardar ref.path para futuras acciones
                     onSuccess(ref.path)
                 }
 
@@ -39,7 +42,10 @@ object StorageUtil {
 
         ref.putBytes(imageBytes)
                 .addOnSuccessListener {
+                    //TODO guardar ref.path para futuras acciones
+
                     onSuccess(ref.path)
+                    Log.d("Path", ref.path )
                 }
     }
 

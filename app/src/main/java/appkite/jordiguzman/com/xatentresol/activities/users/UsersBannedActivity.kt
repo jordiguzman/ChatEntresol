@@ -19,9 +19,11 @@ import org.jetbrains.anko.indeterminateProgressDialog
 
 class UsersBannedActivity : AppCompatActivity() {
 
-    private var userListBanned = ArrayList<User>()
-    private var currentUserName = ""
 
+    private var currentUserName = ""
+    companion object {
+        var userListBanned = ArrayList<User>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +33,7 @@ class UsersBannedActivity : AppCompatActivity() {
 
     }
 
-    private fun sendMessage() {
+     fun sendMessage() {
         val progressDialog = indeterminateProgressDialog("Sending Email. Please wait.")
         val sender = Thread(Runnable {
             try {

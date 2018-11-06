@@ -130,7 +130,7 @@
             android:parentActivityName=".activities.settings.NotificationsSettingsActivity"
             android:theme="@style/AppThemeAppBar" />
         <activity android:name=".activities.ui.NoNetworkActivity" />
-        <activity android:name=".activities.ui.InfoAppActivity"></activity>
+        <activity android:name=".activities.ui.InfoAppActivity"/>
     </application>
 
 </manifest>

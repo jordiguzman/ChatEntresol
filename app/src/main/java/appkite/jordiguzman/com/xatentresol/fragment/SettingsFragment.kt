@@ -29,6 +29,8 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
+
+
 class SettingsFragment : Fragment() {
 
 
@@ -69,11 +71,16 @@ class SettingsFragment : Fragment() {
                     7 -> infoApp()
 
 
+
                 }
             }
         }
         return view
     }
+
+
+
+
 
     private fun infoApp() {
         startActivity<InfoAppActivity>()

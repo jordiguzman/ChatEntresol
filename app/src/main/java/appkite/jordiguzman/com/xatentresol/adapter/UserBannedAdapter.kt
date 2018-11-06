@@ -6,13 +6,11 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import appkite.jordiguzman.com.xatentresol.R
-import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.glide.GlideApp
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.StorageUtil
@@ -31,8 +29,11 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
     private val messageToBannedUser = context.getString(R.string.message_to_banned_user)
     private var isBannedUser = false
 
+
     companion object {
         var userBannedEmail = ""
+
+
     }
 
 
@@ -58,7 +59,10 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
 
             alertDialog(holder, position)
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.secondary_text))
-
+            XatUtil.userBanned["email"] = userBanned[position].emailUser
+            XatUtil.userBanned["name"] = userBanned[position].name
+            XatUtil.userBanned["uid"] = userBanned[position].uidUser
+            //updateBannedUser(position)
             cardViewClicked = true
         }
     }
@@ -104,17 +108,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         dialog.btn_report.setOnClickListener {
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
             cardViewClicked = false
-            comment = dialog.et_user_report.text.toString()
-            //sendMessageToAdmin()
-            //sendMessageToUserBanned()
-            userBannedEmail = userBanned[position].emailUser
-            val isUserBanned = userBanned[position].isBanned
-            Log.d("UserDeleted", isUserBanned.toString())
-            if (isUserBanned){
-                XatUtil.deleteUserBanned()
-            }else{
-                XatUtil.getUserBanned()
-            }
+            setupEmail(dialog, position)
 
 
             alertDialog.dismiss()
@@ -127,43 +121,32 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         }
     }
 
-    private fun sendMessageToUserBanned() {
-        val sender = Thread(Runnable {
-            try {
-                val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
-                sender.sendMail("XatEntresól",
-                        messageToBannedUser,
-                        "xatentresol.report@gmail.com",
-                        emailUserBanned)
-            } catch (e: Exception) {
-                Log.e("mylog", "Error: " + e.message)
-            }
-        })
-        sender.start()
+    private fun setupEmail(dialog: View, position: Int) {
+        comment = dialog.et_user_report.text.toString()
+        //updateBannedUser(position)
+        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
+        reportEmailBody = userBanned[position].name
+        emailUserBanned = userBanned[position].emailUser
+       XatUtil.sendMessageToUserBannedFirst(messageToBannedUser, emailUserBanned)
+        progressDialog.dismiss()
+        /*sendMessageToUserBannedFirst()
+        userBannedEmail = userBanned[position].emailUser
+        val isUserBanned = userBanned[position].isBanned
+        if (isUserBanned) {
+            XatUtil.createEmailBannedDatabase()
+            XatUtil.deleteUserBanned()
+        } else {
+            XatUtil.getUserBanned()
+        }*/
     }
 
-    private fun sendMessageToAdmin() {
-        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
-        val idBanedUser = StorageUtil.getIdOfBannedUser()
-        val sender = Thread(Runnable {
-            try {
-                val sender = GMailSender("xatentresol.report@gmail.com", "noes0r0todoloquereluce")
-                sender.sendMail("XatEntresól",
-                        reportEmailBody.plus("\n")
-                                .plus(comment)
-                                .plus("\n")
-                                .plus(emailUserBanned)
-                                .plus("\n")
-                                .plus(idBanedUser),
-                        "xatentresol.report@gmail.com",
-                        "xatentresol.report@gmail.com")
-                progressDialog.dismiss()
-            } catch (e: Exception) {
-                Log.e("mylog", "Error: " + e.message)
-            }
-        })
-        sender.start()
+
+
+    private fun sendMessageToUserBannedFinal(){
+
     }
+
+
 
 
     class AdapterUserBannedViewHolder(view: View) : RecyclerView.ViewHolder(view) {

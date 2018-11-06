@@ -7,6 +7,7 @@ import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
 import appkite.jordiguzman.com.xatentresol.adapter.UserBannedAdapter
+import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.model.*
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.ImageMessageItem
 import appkite.jordiguzman.com.xatentresol.recyclerview.item.PersonItem
@@ -16,8 +17,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
-
-
+import java.util.*
 
 
 object XatUtil {
@@ -27,12 +27,13 @@ object XatUtil {
     private val currentUserDocRef: DocumentReference
         get() = chatInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid
                 ?: throw NullPointerException("UID is null.")}")
-
-
-
     private var mAuth: FirebaseAuth? = null
     private val chatChannelsCollectionRef = chatInstance.collection("chatChannels")
     private val chatChannelsGroupCollectionRef = chatInstance.collection("chatChannelsGroup")
+    private lateinit var db: DocumentReference
+    val userBanned = HashMap<String, Any>()
+
+
 
     /**
      * *************   Email ********************
@@ -60,7 +61,69 @@ object XatUtil {
         }
         return true
     }
+    fun createEmailBannedDatabase(){
+        db = FirebaseFirestore.getInstance().document("UserBanned/${UUID.randomUUID()}")
+        db.collection("users").document("data").set(userBanned)
+                .addOnSuccessListener {
+                    Log.d("UserBanned", "Ok")
+                }.addOnFailureListener {
+                    Log.d("UserBanned", "Error".plus(it.message))
+                }
 
+    }
+    fun sendMessageToAdminFirst(reportEmailBody: String, comment: String, emailUserBanned: String) {
+
+        val idBanedUser = StorageUtil.getIdOfBannedUser()
+        val sender = Thread(Runnable {
+            try {
+                val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
+                sender.sendMail("XatEntresól",
+                        reportEmailBody.plus("\n")
+                                .plus(comment)
+                                .plus("\n")
+                                .plus(emailUserBanned)
+                                .plus("\n")
+                                .plus("Id banned user: ".plus(idBanedUser)),
+                        "xatentresol.report@gmail.com",
+                        "xatentresol.report@gmail.com")
+
+            } catch (e: Exception) {
+                Log.e("SendMessageError", "Error: " + e.message)
+            }
+        })
+        sender.start()
+    }
+    fun sendMessage() {
+
+        val sender = Thread(Runnable {
+            try {
+                val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
+                sender.sendMail("EmailSender App",
+                        "Cuerpo Correo",
+                        "jordiguz01@gmail.com",
+                        "jordiguz01@gmail.com")
+
+            } catch (e: Exception) {
+                Log.e("mylog", "Error: " + e.message)
+            }
+        })
+        sender.start()
+    }
+
+    fun sendMessageToUserBannedFirst(messageToBannedUser: String, emailUserBanned: String) {
+        val sender = Thread(Runnable {
+            try {
+                val sender = GMailSender("prova.novaxat@gmail.com", "noes0r0todoloquereluce")
+                sender.sendMail("XatEntresól",
+                        messageToBannedUser,
+                        "prova.novaxat@gmail.com",
+                        emailUserBanned)
+            } catch (e: Exception) {
+                Log.e("mylog", "Error: " + e.message)
+            }
+        })
+        sender.start()
+    }
     /**
      * *****************   USERS *****************
      */
@@ -91,14 +154,11 @@ object XatUtil {
                 .delete()
         chatChannelsCollectionRef.document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .delete()
-
-
-        //TODO delete all files of deleted user
-
         val auth = FirebaseAuth.getInstance().currentUser
         auth?.delete()
         currentUserDocRef.delete()
     }
+
 
 
     fun updateCurrentUser(name: String = "", bio: String = "", profilePicturePath: String? = null, isBanned: Boolean = false) {
@@ -109,7 +169,6 @@ object XatUtil {
         if (profilePicturePath != null) {
             userFieldMap["profilePicturePath"] = profilePicturePath
         }
-
         currentUserDocRef.update(userFieldMap)
     }
 
@@ -134,9 +193,13 @@ object XatUtil {
         userRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful){
                 for (document in task.result!!){
-                    uidUser = document.getString("uidUser")!!
+                    uidUser = document.getString("uidUser")
                     val email = document.getString("emailUser")
-                    if (UserBannedAdapter.userBannedEmail == email){
+                    val isBanned = document.getBoolean("banned")
+                    if (isBanned!!){
+                        deleteUserBanned()
+
+                    }else if (UserBannedAdapter.userBannedEmail == email && !isBanned){
                         updateBannerUser(db, pathUser, uidUser)
                     }
                 }
@@ -145,7 +208,9 @@ object XatUtil {
     }
 
     private fun updateBannerUser(db: FirebaseFirestore, pathUser: String, uidUser: String?) {
+
         val userBannedRef = db.collection(pathUser).document(uidUser!!)
+
         userBannedRef.update("banned", true)
                 .addOnSuccessListener {
                     Log.d("UIDSuccess", "")
@@ -155,8 +220,17 @@ object XatUtil {
                 }
     }
     fun deleteUserBanned(){
-        Log.d("UserDeleted", "")
+        val db1: FirebaseFirestore = FirebaseFirestore.getInstance()
+        db1.collection("users").document(FirebaseAuth.getInstance().uid!!)
+                .delete()
+        db1.collection("chatChannels").document(FirebaseAuth.getInstance().uid!!)
+                .delete()
+        chatChannelsCollectionRef.document(FirebaseAuth.getInstance().uid!!)
+                .delete()
+
+
     }
+
 
 
     /**
@@ -308,14 +382,14 @@ object XatUtil {
 
 
     //Region FCM
-    fun getFCMRegistrtionTokens(onComplete: (tokens: MutableList<String>) -> Unit) {
+    fun getFCMRegistrationTokens(onComplete: (tokens: MutableList<String>) -> Unit) {
         currentUserDocRef.get().addOnSuccessListener {
             val user = it.toObject(User::class.java)!!
             onComplete(user.registrationTokens)
         }
     }
 
-    fun setFCMRegistrtionTokens(registrationTokens: MutableList<String>) {
+    fun setFCMRegistrationTokens(registrationTokens: MutableList<String>) {
         currentUserDocRef.update(mapOf("registrationTokens" to registrationTokens))
     }
     //endRegion FCM

@@ -12,3 +12,9 @@ data class User(val name: String,
 
 
 }
+
+data class UserBanned(var name: String,
+                      var email: String,
+                      var uid: String){
+    constructor(): this("", "", "")
+}
