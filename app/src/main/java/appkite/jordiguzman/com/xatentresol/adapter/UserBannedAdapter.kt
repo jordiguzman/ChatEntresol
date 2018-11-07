@@ -17,7 +17,6 @@ import appkite.jordiguzman.com.xatentresol.util.StorageUtil
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.custom_dialog_banned_users.view.*
-import org.jetbrains.anko.indeterminateProgressDialog
 
 class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Context) :
         RecyclerView.Adapter<UserBannedAdapter.AdapterUserBannedViewHolder>() {
@@ -57,30 +56,40 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
                 return@setOnClickListener
             }
 
-            alertDialog(holder, position)
+            alertDialog(holder, position, context)
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.secondary_text))
-            XatUtil.userBanned["email"] = userBanned[position].emailUser
-            XatUtil.userBanned["name"] = userBanned[position].name
-            XatUtil.userBanned["uid"] = userBanned[position].uidUser
-            //updateBannedUser(position)
+            setDataUserBanned(position)
+            updateBannedUser(position)
             cardViewClicked = true
         }
+    }
+
+    private fun setDataUserBanned(position: Int) {
+        XatUtil.userBanned["email"] = userBanned[position].emailUser
+        XatUtil.userBanned["name"] = userBanned[position].name
+        XatUtil.userBanned["uid"] = userBanned[position].uidUser
     }
 
     private fun updateBannedUser(position: Int) {
         if (userBanned[position].isBanned) {
             sendMessageToAdminDeleteUserBanned()
             return
+        }else{
+            setEmailToUserBannedFirst(position)
         }
-        reportEmailBody = userBanned[position].name
-        val bio = userBanned[position].bio
-        val profilePicturePath = userBanned[position].profilePicturePath
-        emailUserBanned = userBanned[position].emailUser
-        userBanned[position].isBanned = true
-        isBannedUser = userBanned[position].isBanned
+
+
+
 
     }
 
+    private fun setEmailToUserBannedFirst(position: Int) {
+        reportEmailBody = userBanned[position].name
+        emailUserBanned = userBanned[position].emailUser
+        userBanned[position].isBanned = true
+        isBannedUser = userBanned[position].isBanned
+        XatUtil.sendMessageToUserBannedFirst(messageToBannedUser, emailUserBanned, context)
+    }
 
 
     private fun sendMessageToAdminDeleteUserBanned(){
@@ -96,7 +105,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
     override fun getItemCount() = userBanned.size
 
     @SuppressLint("InflateParams")
-    private fun alertDialog(holder: AdapterUserBannedViewHolder, position: Int) {
+    private fun alertDialog(holder: AdapterUserBannedViewHolder, position: Int, context: Context) {
         val dialog = LayoutInflater.from(context).inflate(R.layout.custom_dialog_banned_users, null)
         val builder = AlertDialog.Builder(context)
                 .setView(dialog)
@@ -108,7 +117,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         dialog.btn_report.setOnClickListener {
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.icons))
             cardViewClicked = false
-            setupEmail(dialog, position)
+            setupEmail(dialog, position, context)
 
 
             alertDialog.dismiss()
@@ -121,14 +130,13 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         }
     }
 
-    private fun setupEmail(dialog: View, position: Int) {
+    private fun setupEmail(dialog: View, position: Int, context: Context) {
         comment = dialog.et_user_report.text.toString()
-        //updateBannedUser(position)
-        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
+        XatUtil.getUserBanned()
         reportEmailBody = userBanned[position].name
         emailUserBanned = userBanned[position].emailUser
-       XatUtil.sendMessageToUserBannedFirst(messageToBannedUser, emailUserBanned)
-        progressDialog.dismiss()
+        XatUtil.sendMessageToUserBannedFirst(messageToBannedUser, emailUserBanned, context)
+
         /*sendMessageToUserBannedFirst()
         userBannedEmail = userBanned[position].emailUser
         val isUserBanned = userBanned[position].isBanned

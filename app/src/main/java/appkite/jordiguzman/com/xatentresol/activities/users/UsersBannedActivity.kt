@@ -10,12 +10,10 @@ import android.widget.LinearLayout
 import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.adapter.UserBannedAdapter
-import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.model.User
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_users_banned.*
-import org.jetbrains.anko.indeterminateProgressDialog
 
 class UsersBannedActivity : AppCompatActivity() {
 
@@ -33,22 +31,6 @@ class UsersBannedActivity : AppCompatActivity() {
 
     }
 
-     fun sendMessage() {
-        val progressDialog = indeterminateProgressDialog("Sending Email. Please wait.")
-        val sender = Thread(Runnable {
-            try {
-                val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
-                sender.sendMail("EmailSender App",
-                        "Cuerpo Correo",
-                        "jordiguz@gmail.com",
-                        "jordiguz@gmail.com")
-                progressDialog.dismiss()
-            } catch (e: Exception) {
-                Log.e("mylog", "Error: " + e.message)
-            }
-        })
-        sender.start()
-    }
     private fun getCurrentUserName() {
         XatUtil.getCurrentUser { user ->
             currentUserName = user.name

@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
+import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.adapter.UserBannedAdapter
 import appkite.jordiguzman.com.xatentresol.email.GMailSender
 import appkite.jordiguzman.com.xatentresol.model.*
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.kotlinandroidextensions.Item
+import org.jetbrains.anko.indeterminateProgressDialog
 import java.util.*
 
 
@@ -32,6 +34,7 @@ object XatUtil {
     private val chatChannelsGroupCollectionRef = chatInstance.collection("chatChannelsGroup")
     private lateinit var db: DocumentReference
     val userBanned = HashMap<String, Any>()
+
 
 
 
@@ -71,12 +74,12 @@ object XatUtil {
                 }
 
     }
-    fun sendMessageToAdminFirst(reportEmailBody: String, comment: String, emailUserBanned: String) {
-
+    fun sendMessageToAdminFirst(reportEmailBody: String, comment: String, emailUserBanned: String, context: Context) {
+        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
         val idBanedUser = StorageUtil.getIdOfBannedUser()
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
+                val sender = GMailSender("jordiguz@gmail.com", AppConstants.EMAIL_PASSWORD)
                 sender.sendMail("XatEntresól",
                         reportEmailBody.plus("\n")
                                 .plus(comment)
@@ -86,7 +89,7 @@ object XatUtil {
                                 .plus("Id banned user: ".plus(idBanedUser)),
                         "xatentresol.report@gmail.com",
                         "xatentresol.report@gmail.com")
-
+                progressDialog.dismiss()
             } catch (e: Exception) {
                 Log.e("SendMessageError", "Error: " + e.message)
             }
@@ -97,7 +100,7 @@ object XatUtil {
 
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("jordiguz@gmail.com", "noes0r0todoloquereluce")
+                val sender = GMailSender("jordiguz@gmail.com", AppConstants.EMAIL_PASSWORD)
                 sender.sendMail("EmailSender App",
                         "Cuerpo Correo",
                         "jordiguz01@gmail.com",
@@ -110,14 +113,16 @@ object XatUtil {
         sender.start()
     }
 
-    fun sendMessageToUserBannedFirst(messageToBannedUser: String, emailUserBanned: String) {
+    fun sendMessageToUserBannedFirst(messageToBannedUser: String, emailUserBanned: String, context: Context) {
+        val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("prova.novaxat@gmail.com", "noes0r0todoloquereluce")
+                val sender = GMailSender("entresol.report@gmail.com", AppConstants.EMAIL_PASSWORD)
                 sender.sendMail("XatEntresól",
                         messageToBannedUser,
-                        "prova.novaxat@gmail.com",
+                        "entresol.report@gmail.com",
                         emailUserBanned)
+                progressDialog.dismiss()
             } catch (e: Exception) {
                 Log.e("mylog", "Error: " + e.message)
             }
@@ -197,7 +202,8 @@ object XatUtil {
                     val email = document.getString("emailUser")
                     val isBanned = document.getBoolean("banned")
                     if (isBanned!!){
-                        deleteUserBanned()
+                        //deleteUserBanned()
+                        Log.d("BannedUserEmailInactive", "")
 
                     }else if (UserBannedAdapter.userBannedEmail == email && !isBanned){
                         updateBannerUser(db, pathUser, uidUser)
