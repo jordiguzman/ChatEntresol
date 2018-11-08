@@ -6,5 +6,5 @@ object AppConstants {
     const val USER_PATH_PHOTO = "USER_PATH_PHOTO"
     const val GROUP_CHAT = "groupChat"
     var GROUP_CHANNEL_ID= "groupChannelId"
-
+    const val EMAIL_PASSWORD = "noes0r0todoloquereluce"
 }
