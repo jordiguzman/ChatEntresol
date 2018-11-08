@@ -79,7 +79,7 @@ object XatUtil {
         val idBanedUser = StorageUtil.getIdOfBannedUser()
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("jordiguz@gmail.com", AppConstants.EMAIL_PASSWORD)
+                val sender = GMailSender(R.string.email_guz.toString(), R.string.email_password.toString())
                 sender.sendMail("XatEntresól",
                         reportEmailBody.plus("\n")
                                 .plus(comment)
@@ -87,8 +87,8 @@ object XatUtil {
                                 .plus(emailUserBanned)
                                 .plus("\n")
                                 .plus("Id banned user: ".plus(idBanedUser)),
-                        "xatentresol.report@gmail.com",
-                        "xatentresol.report@gmail.com")
+                        R.string.email_xat.toString(),
+                        R.string.email_xat.toString())
                 progressDialog.dismiss()
             } catch (e: Exception) {
                 Log.e("SendMessageError", "Error: " + e.message)
@@ -100,11 +100,11 @@ object XatUtil {
 
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("jordiguz@gmail.com", AppConstants.EMAIL_PASSWORD)
+                val sender = GMailSender(R.string.email_guz.toString(), R.string.email_password.toString())
                 sender.sendMail("EmailSender App",
                         "Cuerpo Correo",
-                        "jordiguz01@gmail.com",
-                        "jordiguz01@gmail.com")
+                        R.string.email_guz.toString(),
+                        R.string.email_guz.toString())
 
             } catch (e: Exception) {
                 Log.e("mylog", "Error: " + e.message)
@@ -117,10 +117,10 @@ object XatUtil {
         val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
         val sender = Thread(Runnable {
             try {
-                val sender = GMailSender("entresol.report@gmail.com", AppConstants.EMAIL_PASSWORD)
+                val sender = GMailSender(R.string.email_xat.toString(), R.string.email_password.toString())
                 sender.sendMail("XatEntresól",
                         messageToBannedUser,
-                        "entresol.report@gmail.com",
+                        R.string.email_xat.toString(),
                         emailUserBanned)
                 progressDialog.dismiss()
             } catch (e: Exception) {
