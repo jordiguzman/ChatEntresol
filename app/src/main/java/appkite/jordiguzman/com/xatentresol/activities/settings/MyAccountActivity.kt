@@ -233,6 +233,7 @@ class MyAccountActivity : AppCompatActivity() {
                 for (document in task.result!!) {
                     nameUsers.add(User(document.getString("name")!!, "",
                             "", mutableListOf(), "", false,
+                            false,
                             document.getString("uidUser")!!))
 
                 }

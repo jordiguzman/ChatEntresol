@@ -37,7 +37,6 @@ object XatUtil {
 
 
 
-
     /**
      * *************   Email ********************
      */
@@ -64,16 +63,7 @@ object XatUtil {
         }
         return true
     }
-    fun createEmailBannedDatabase(){
-        db = FirebaseFirestore.getInstance().document("UserBanned/${UUID.randomUUID()}")
-        db.collection("users").document("data").set(userBanned)
-                .addOnSuccessListener {
-                    Log.d("UserBanned", "Ok")
-                }.addOnFailureListener {
-                    Log.d("UserBanned", "Error".plus(it.message))
-                }
 
-    }
     fun sendMessageToAdminFirst(reportEmailBody: String, comment: String, emailUserBanned: String, context: Context) {
         val progressDialog = context.indeterminateProgressDialog(context.getString(R.string.enviando_reporte))
         val idBanedUser = StorageUtil.getIdOfBannedUser()
@@ -141,7 +131,7 @@ object XatUtil {
                 val newUser = User(FirebaseAuth.getInstance().currentUser?.displayName ?: "",
                         "", null, mutableListOf(),
                         FirebaseAuth.getInstance().currentUser?.email.toString()
-                        , false, FirebaseAuth.getInstance().currentUser?.uid!!)
+                        , false, false, FirebaseAuth.getInstance().currentUser?.uid!!)
                 currentUserDocRef.set(newUser).addOnSuccessListener {
                     onComplete()
                 }
@@ -208,6 +198,21 @@ object XatUtil {
                     }else if (UserBannedAdapter.userBannedEmail == email && !isBanned){
                         updateBannerUser(db, pathUser, uidUser)
                     }
+                }
+            }
+        }
+    }
+    fun getUserStartForSuspended() {
+        val pathUser = "users"
+        var isSuspended: Boolean
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection(pathUser)
+        userRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                for (document in task.result!!){
+                    isSuspended = document.getBoolean("suspended")!!
+                    Log.d("IsSuspensed", isSuspended.toString())
+
                 }
             }
         }

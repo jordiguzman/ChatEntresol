@@ -53,7 +53,7 @@ class UsersBannedActivity : AppCompatActivity() {
                     val email = document.getString("emailUser")
                     val uid = document.getString("uidUser")
                     if (!name.equals(currentUserName)){
-                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false, uid!!))
+                        userListBanned.add(User(name!!, "", profilePicturePath, mutableListOf(), email!!, false, false, uid!!))
                         Log.d("banned", userListBanned.size.toString())
                     }
                 }

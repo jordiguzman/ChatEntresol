@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,8 +59,27 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
 
             alertDialog(holder, position, context)
             holder.cardViewBannedUser.setCardBackgroundColor(ContextCompat.getColor(context, R.color.secondary_text))
-            setDataUserBanned(position)
-            updateBannedUser(position)
+
+            //Pruebas
+            //setDataUserBanned(position)
+
+            // Leer la database que se ha creado arriba.
+            /**
+             * AL PEGISTRARSE O INICIAR SESION COMPROBAR DATABASE CUENTAS SUSPENDIDAS
+             *
+             * EL USUARIO SUSPENDIDO TIENE QUE DESAPARECER DEL RECYCLERVIEW
+             *
+             * PRIMERO MIRAR LOS USUARIOS POR SI HAY ALGUNO BANEADO. EN TAL CASO GUARDARLO EN USERBANNED
+             * SI NO HA SIDO BANEADO ENVIAR UN CORREO DE AVISO AL USUARIO Y OTRO AL ADMIN.
+             * SI YA HA SIDO BANEADO ENVIAR UN CORREO AL USUARIO DICIENDOLE QUE SU CUENTA ESTA SUSPENDIDA Y OTRO AL ADMIN. GUARDAR A DATABASE DE CUENTAS SUSPENDIDAS.
+             *
+             * DOS OPCIONES:
+             * BORRAR POR COMPLETO AL USUARIO DE LA DATABASE, DE AUTH Y DE STORAGE. PROBLEMAS: ¿QUE PASA CON LOS CHAT ABIERTOS?¿DARA ERROR?
+             * NO BORRAR EL USUARIO DE LA DATABASE PERO SÍ DEL RECYCLERVIEW DE USUARIOS. ¿QUE PASA CON LOS CHAT ABIERTOS?¿DARA ERROR?
+             * COMPROBAR AMBAS OPCIONES.
+             */
+            //setDataUserBanned(position)
+            //updateBannedUser(position)
             cardViewClicked = true
         }
     }
@@ -72,10 +92,13 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
 
     private fun updateBannedUser(position: Int) {
         if (userBanned[position].isBanned) {
-            sendMessageToAdminDeleteUserBanned()
+            Log.d("BannedUser", userBanned[position].isBanned.toString() )
+            Log.d("BannedUser", userBanned[position].name )
+            //sendMessageToAdminDeleteUserBanned()
             return
         }else{
-            setEmailToUserBannedFirst(position)
+            Log.d("BannedUser", userBanned[position].isBanned.toString() )
+            //setEmailToUserBannedFirst(position)
         }
 
 
@@ -141,7 +164,7 @@ class UserBannedAdapter(private val userBanned: ArrayList<User>, val context: Co
         userBannedEmail = userBanned[position].emailUser
         val isUserBanned = userBanned[position].isBanned
         if (isUserBanned) {
-            XatUtil.createEmailBannedDatabase()
+            XatUtil.createBannedDatabase()
             XatUtil.deleteUserBanned()
         } else {
             XatUtil.getUserBanned()

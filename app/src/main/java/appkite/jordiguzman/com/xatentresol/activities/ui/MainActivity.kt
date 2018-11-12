@@ -14,6 +14,7 @@ import appkite.jordiguzman.com.xatentresol.R
 import appkite.jordiguzman.com.xatentresol.activities.chat.GroupChatActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.MyAccountActivity
 import appkite.jordiguzman.com.xatentresol.activities.settings.SignInActivity
+import appkite.jordiguzman.com.xatentresol.activities.users.BannedUserNoticeActivity
 import appkite.jordiguzman.com.xatentresol.fragment.PeopleFragment
 import appkite.jordiguzman.com.xatentresol.fragment.SettingsFragment
 import appkite.jordiguzman.com.xatentresol.util.XatUtil
@@ -27,11 +28,19 @@ import kotlin.system.exitProcess
 class MainActivity : AppCompatActivity() {
 
 
+    private var emailSuspended: Boolean? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        getCurrentUserSuspended()
+
+
+
+
         replaceFragment(PeopleFragment())
         navigation.selectedItemId = R.id.navigation_people
 
@@ -56,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         //addBadge(0)
 
         checkFirstTimeUser()
+
 
         navigation.setOnNavigationItemSelectedListener {
 
@@ -86,6 +96,17 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+    private fun getCurrentUserSuspended() {
+        XatUtil.getCurrentUser { user ->
+            emailSuspended = user.isSuspended
+
+            if (emailSuspended!!){
+                startActivity<BannedUserNoticeActivity>()
+                finish()
+
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
